@@ -2,10 +2,26 @@
   function hide() {
     document.getElementById("demo").style.visibility = "hidden";
   }
+  
+  function move() {
+      document.getElementById("card1").style.position = "absolute";
+      document.getElementById("card1").style.background = "red"; 
+      document.getElementById("card1").style.left = cardPos + "100px"; 
+      document.getElementById("card1").style.top = "250px"; 
+
+      document.getElementById("card2").style.position = "absolute";
+      document.getElementById("card2").style.background = "blue"; 
+      document.getElementById("card2").style.left = "200px"; 
+      document.getElementById("card2").style.top = "450px"; 
+  }
 </script>
 
 <!-- the link below has not been implemented yet -->
-<a href="/display">Click to send a request to display something below</a>
+<a href="/display">Click to send a request to do something</a>
+<br>
+<p>Click on the cards to move them</p>
 
+<p onclick="move()" id="card1">CARD1</p>
+<p onclick="move()" id="card2">CARD2</p>
 
 <p id="demo" onclick="hide()">Click me to hide me!</p>
