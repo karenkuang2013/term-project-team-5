@@ -1,4 +1,4 @@
 [Game Name]
 ===========
 
-A game like rummy.
+A Rummy card game.
