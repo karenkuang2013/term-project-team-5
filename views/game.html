@@ -1,27 +1,47 @@
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+ var socket = io();
+
+</script>
+
 <script>
   function hide() {
     document.getElementById("demo").style.visibility = "hidden";
   }
-  
-  function move() {
-      document.getElementById("card1").style.position = "absolute";
-      document.getElementById("card1").style.background = "red"; 
-      document.getElementById("card1").style.left = cardPos + "100px"; 
-      document.getElementById("card1").style.top = "250px"; 
-
-      document.getElementById("card2").style.position = "absolute";
-      document.getElementById("card2").style.background = "blue"; 
-      document.getElementById("card2").style.left = "200px"; 
-      document.getElementById("card2").style.top = "450px"; 
-  }
 </script>
+
+<style>
+
+     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+     body { font: 13px Helvetica, Arial; }
+
+     form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+
+     form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+
+     form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+
+     #messages { list-style-type: none; margin: 0; padding: 0; }
+
+     #messages li { padding: 5px 10px; }
+
+     #messages li:nth-child(odd) { background: #eee; }
+
+</style>
 
 <!-- the link below has not been implemented yet -->
 <a href="/display">Click to send a request to do something</a>
 <br>
-<p>Click on the cards to move them</p>
 
-<p onclick="move()" id="card1">CARD1</p>
-<p onclick="move()" id="card2">CARD2</p>
+<div id="chat">
+    <ul id="messages"></ul>
+
+   <form action="">
+       <input id="m" autocomplete="off" />
+       <button>Send</button>
+   </form></div>
 
 <p id="demo" onclick="hide()">Click me to hide me!</p>
