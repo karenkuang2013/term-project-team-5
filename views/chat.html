@@ -1,0 +1,49 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+<script>
+
+ var socket = io();
+ 
+ function sendMessage() {
+     var message = document.getElementById("chat-input").value;
+    socket.emit('chat message', message);
+ }
+ 
+ socket.on('chat message', function(msg) {
+        var liNode, liText;
+        liNode = document.createElement("LI");
+        liText = document.createTextNode(msg);
+        
+        liNode.appendChild(liText);
+        document.getElementById("messages").appendChild(liNode);
+        //console.log("Called once: " + msg);
+        
+    });
+
+</script>
+
+<style>
+
+     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+     body { font: 13px Helvetica, Arial; }
+     
+     #messages { list-style-type: none; margin: 0; padding: 0; }
+
+     #messages li { padding: 5px 10px; }
+
+     #messages li:nth-child(odd) { background: #eee; }
+
+</style>
+
+<br>
+
+<div id="chat">
+    <ul id="messages"></ul>
+
+   <form id="chat-form" action="">
+       <input id="chat-input" type="text" autocomplete="off" />
+       <input type="button" onclick="sendMessage()" value="Send">   
+   </form>
+</div>
