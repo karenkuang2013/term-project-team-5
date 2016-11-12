@@ -1,16 +1,21 @@
+<!--
+Include this file whenever you need a chat within the page
+-->
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 
 <script>
 
- var socket = io('/chat');
+var uri = window.location.pathname;
+var socket = io(uri); //sets the namespace to be the uri
  
  function sendMessage() {
      var message = document.getElementById("chat-input").value;
-    socket.emit('chat message', message);
+    socket.emit('chat_sent', message);
  }
  
- socket.on('chat message', function(msg) {
+ socket.on('chat_received', function(msg) {
         var liNode, liText, ulMessages;
         liNode = document.createElement("LI");
         liText = document.createTextNode(msg);

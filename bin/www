@@ -23,34 +23,6 @@ var server = http.createServer(app);
 var io = app.io;
 io.listen(server);
 
-//pass to [filename].js as argument to function
-//var lobby = require('../routes/lobby');
-//lobby(io);
-
-/*
-io.on('connection', function(socket) {
-    console.log("A user connected to /");
-    
-    socket.on('disconnect', function() {
-        console.log("user disconnected from /");
-    });
-    
-    socket.on('chat message', function(msg) {
-        console.log("message: " + msg);
-        io.emit('chat message', "Socket id(" + socket.id + "): " + msg);
-    });
-});
-
-var io_lobby = io.of('/chat');
-
-io_lobby.on('connection', function(socket) {
-    console.log("A user connected to the /chat namespace");
-    
-    socket.on('disconnect', function() {
-        console.log("user disconnected from /chat namespace");
-    });
-});
-*/
 /**
  * Listen on provided port, on all network interfaces.
  */
