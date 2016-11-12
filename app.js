@@ -1,4 +1,4 @@
-const express = require('express')
+var express = require('express')
 const path = require('path')
 const favicon = require('serve-favicon')
 const logger = require('morgan')
@@ -23,7 +23,11 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', index)
+app.use('/login', index)
+app.use('/logout', index)
+app.use('/content', index)
 app.use('/users', users)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
