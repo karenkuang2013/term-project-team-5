@@ -17,7 +17,7 @@ const auth = function(request, response, next) {
   if (request.session && request.session.user === username && request.session.admin)
     return next();
   else
-    return response.sendFile(path.join(__dirname + '/login.html'));
+    return response.sendFile(path.join(__dirname + '/public/index.html'));
 };
 
 // Get content endpoint
@@ -28,7 +28,7 @@ router.get('/', auth, function (request, response) {
 
 //login homepage
 router.get('/login', function(request, response, next) {
-  response.sendFile(path.join(__dirname + '/login.html'));
+  response.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
 // Login request

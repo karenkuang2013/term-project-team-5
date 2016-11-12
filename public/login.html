@@ -1,28 +1,19 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <title>Login</title>
-        <link rel ="stylesheet" type="text/css" href="css/style.css">
-        <link rel ="stylesheet" type="text/css" href="css/font-awesome.css">
+        <link rel ="stylesheet" type="text/css" href="/css/style.css">
+        <link rel ="stylesheet" type="text/css" href="/css/font-awesome.css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div class="container">
-            <img src="img/logo.jpg">
-            <form>
-                <div class="form-input">
-                    <input type="text" name="username" placeholder="Username">
-                </div>
-                <div class="form-input">
-                    <input type="password" name="password" placeholder="Password">
-                </div>
-                <input type="submit" name ="submit" value="LOGIN" class="btn-login"><br>
+        <div>
+            <img src="/img/logo.jpg">
+          <form action = "/login" method= "POST">
+				<input type = "text" name= "username"><br>
+				<input type = "password" name= "password"><br>
+				<input type= "submit" value = "login">
                 <a href="register.html">Create a new account</a>
             </form>
         </div>
