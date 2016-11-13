@@ -4,11 +4,16 @@ const favicon = require('serve-favicon')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-
-const index = require('./routes/index')
-const users = require('./routes/users')
+const socket_io = require('socket.io');
 
 const app = express()
+const io = socket_io();
+app.io = io;
+
+//routes
+const index = require('./routes/index')
+const users = require('./routes/users')
+const lobby = require('./routes/lobby')(io);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -27,6 +32,7 @@ app.use('/login', index)
 app.use('/logout', index)
 app.use('/content', index)
 app.use('/users', users)
+app.use('/lobby', lobby);
 
 
 // catch 404 and forward to error handler
