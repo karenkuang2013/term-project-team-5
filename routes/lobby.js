@@ -1,25 +1,36 @@
 module.exports = function(io) {  
-    var express = require('express');
-    var router = express.Router();
-
+    let express = require('express');
+    let router = express.Router();
+	let username;
+	router.use(express.static('public', {'root': './'}))
+	
     /* GET home page. */
     router.get('/', function(req, res, next) {
+		username  = req.body.username;		
         res.render('lobby', {});
     });
 
     router.post('/', function(request, response, next) {
-        response.render('lobby', { text: "A post request was sent"});
+
+        username  = req.body.username;		
+        res.render('lobby', {});
+            
     });
     
     io.on('connection', function(socket) {
         console.log("A user connected to /");
-    
+		socket.on('chat_sent', function(message){
+			username = message.substr(0,message.indexOf(' ')); 
+		    message = message.substr(message.indexOf(' ')+1);
+			io.sockets.emit('chat_received', username + ": " + message);
+		});
         socket.on('disconnect', function() {
             console.log("user disconnected from /");
         });
+		
     });
     
-    var io_lobby = io.of('lobby');
+    let io_lobby = io.of('lobby');
     
     io_lobby.on('connection', function(socket) {
         console.log("A user connected to the /lobby namespace");
@@ -33,6 +44,7 @@ module.exports = function(io) {
             io_lobby.emit('chat_received', "Socket id(" + socket.id + "): " + message);
         });
     }); 
-    
+     
+
     return router;
 }

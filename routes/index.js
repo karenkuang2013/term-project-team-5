@@ -7,6 +7,7 @@ const express = require('express'),
     saveUninitialized: true
 }));
 const path = require('path')
+
 let username
 let pgp = require('pg-promise')();
 let db = pgp('postgres://postgres:QAZxsw_456@localhost:5432/rummydb')
@@ -32,29 +33,31 @@ router.get('/', auth, function (request, response) {
 
 
 //login homepage
-router.get('/lobby', function(request, response, next) {
+router.get('/login', function(request, response, next) {
 	 response.sendFile(path.join(__dirname,'html/index.html'));
 });
 
 // Login request
-router.post('/lobby', function (request, response) {
+router.post('/login', function (request, response) {
 
   if (!request.body.username || !request.body.password) {
-    response.send('login failed');    
+	  if( !request.session.user === username){
+	  response.send('login failed');    }
   }
-  else checkPlayerExists(request, response)
+  else {
+	  checkPlayerExists(request, response)
+  }
 
 });
 
  //register page
 router.get('/register', function (request, response) {
-	console.log(__dirname);
     response.sendFile(path.join(__dirname,'html/register.html'));
 });
 
 // Logout endpoint
 router.get('/logout', function (request, response) {
-    request.session.destroy();
+     request.session.destroy();
      response.sendFile(path.join(__dirname,'html/index.html'));
 });
  
@@ -66,7 +69,8 @@ router.get('/logout', function (request, response) {
 		username  = request.body.username;
         request.session.user = request.body.username;
         request.session.admin = true;
-        response.sendFile(path.join(__dirname,'html/lobby.html'));
+		debugger;
+        response.render('lobby', { usern: JSON.stringify(username)});
     })
     .catch(function (error) {
 		  response.send("incorrect username/password");
@@ -74,4 +78,4 @@ router.get('/logout', function (request, response) {
 	
  }
  
-module.exports = router;
+module.exports = router

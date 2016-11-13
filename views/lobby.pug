@@ -1,7 +1,9 @@
 extends layout
 
 block content
-  h1 Lobby
-  include chat.html
-  p= text
+  include ../routes/html/lobby.html
+  <input style=" visibility: hidden;" id="target" value =!{usern} >
+ 
+
+
   
