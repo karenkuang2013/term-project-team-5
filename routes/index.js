@@ -27,14 +27,14 @@ const auth = function(request, response, next) {
 };
 
 // Get content endpoint
-router.get('/', auth, function (request, response) {
-     response.sendFile(path.join(__dirname,'html/lobby.html'));
+router.get('/', function (request, response) {
+     response.redirect('/login');
 });
 
 
 //login homepage
-router.get('/login', function(request, response, next) {
-	 response.sendFile(path.join(__dirname,'html/index.html'));
+router.get('/login',auth, function(request, response, next) {
+	response.render('lobby', { usern: JSON.stringify(username)});
 });
 
 // Login request
