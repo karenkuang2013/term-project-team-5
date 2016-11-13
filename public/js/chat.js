@@ -5,7 +5,6 @@ var socket = io(); //sets the namespace to be the uri
      var message = document.getElementById("chat-input").value;
 	 document.getElementById("chat-input").value = "";
 	 message = document.getElementById("target").value + " " + message;
-	 debugger;
     socket.emit('chat_sent', message);
 
  }

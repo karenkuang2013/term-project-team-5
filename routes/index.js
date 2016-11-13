@@ -55,6 +55,18 @@ router.get('/register', function (request, response) {
     response.sendFile(path.join(__dirname,'html/register.html'));
 });
 
+ //register page
+router.post('/register', function (request, response) {
+	db.none("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5)",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
+	.then(function () {
+		response.redirect('/login');
+    })
+    .catch(function (error) {
+		  console.log(error);
+    });
+   
+});
+
 // Logout endpoint
 router.get('/logout', function (request, response) {
      request.session.destroy();
@@ -69,7 +81,6 @@ router.get('/logout', function (request, response) {
 		username  = request.body.username;
         request.session.user = request.body.username;
         request.session.admin = true;
-		debugger;
         response.render('lobby', { usern: JSON.stringify(username)});
     })
     .catch(function (error) {
