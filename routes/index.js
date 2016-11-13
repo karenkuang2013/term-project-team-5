@@ -11,28 +11,33 @@ let username
 let pgp = require('pg-promise')();
 let db = pgp('postgres://postgres:QAZxsw_456@localhost:5432/rummydb')
 
+router.use(express.static('public', {'root': './'}))
 
 // Authentication and Authorization Middleware
 const auth = function(request, response, next) {
   if (request.session && request.session.user === username && request.session.admin)
+  {
     return next();
+  }
   else
-    return response.sendFile(path.join(__dirname + '/public/index.html'));
+  {
+    return  response.sendFile(path.join(__dirname,'html/index.html'));
+  }
 };
 
 // Get content endpoint
 router.get('/', auth, function (request, response) {
-    response.send("You can only see this after you've logged in.");
+     response.sendFile(path.join(__dirname,'html/lobby.html'));
 });
 
 
 //login homepage
-router.get('/login', function(request, response, next) {
-  response.sendFile(path.join(__dirname + '/public/index.html'));
+router.get('/lobby', function(request, response, next) {
+	 response.sendFile(path.join(__dirname,'html/index.html'));
 });
 
 // Login request
-router.post('/login', function (request, response) {
+router.post('/lobby', function (request, response) {
 
   if (!request.body.username || !request.body.password) {
     response.send('login failed');    
@@ -41,11 +46,16 @@ router.post('/login', function (request, response) {
 
 });
 
- 
+ //register page
+router.get('/register', function (request, response) {
+	console.log(__dirname);
+    response.sendFile(path.join(__dirname,'html/register.html'));
+});
+
 // Logout endpoint
 router.get('/logout', function (request, response) {
-  request.session.destroy();
-  response.send("logout success!");
+    request.session.destroy();
+     response.sendFile(path.join(__dirname,'html/index.html'));
 });
  
  
@@ -56,7 +66,7 @@ router.get('/logout', function (request, response) {
 		username  = request.body.username;
         request.session.user = request.body.username;
         request.session.admin = true;
-        response.send("login success!");
+        response.sendFile(path.join(__dirname,'html/lobby.html'));
     })
     .catch(function (error) {
 		  response.send("incorrect username/password");
