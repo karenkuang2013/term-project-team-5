@@ -1,19 +1,45 @@
-var express = require('express')
+/**
+ * Module dependencies.
+ */
+const config = require('./config')
+const express = require('express')
+const http = require('http')
 const path = require('path')
 const favicon = require('serve-favicon')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const socket_io = require('socket.io');
+const io = require('socket.io')()
+const pgp = require('pg-promise')()
 
 const app = express()
-const io = socket_io();
-app.io = io;
+const server = http.createServer(app)
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+app.io = io
+io.listen(server)
+server.listen(config.PORT)
+
+/**
+ * Initialise pg promise
+ */
+const connection = {
+  host: config.db_host,
+  port: config.db_port,
+  database: config.db_name ,
+  user: config.db_user,
+  password: config.db_pass
+}
+
+const db = pgp(connection)
 
 //routes
 const index = require('./routes/index')
 const users = require('./routes/users')
-const lobby = require('./routes/lobby')(io);
+const lobby = require('./routes/lobby')(io)
+const game = require('./routes/game')(db, io)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
@@ -25,12 +51,13 @@ app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
-//app.use(express.static(path.join(__dirname, 'public')))
+// app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', index)
 app.use('/login', index)
 app.use('/logout', index)
 app.use('/content', index)
+app.use('/game', game)
 app.use('/users', users)
 
 
@@ -51,5 +78,3 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500)
   res.render('error')
 })
-
-module.exports = app
