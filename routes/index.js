@@ -1,16 +1,16 @@
-const express = require('express'),
-router = express.Router(),
-session = require('express-session');
-router.use(session({
-  secret: 'some-873-key-test',
-  resave: true,
-  saveUninitialized: true
-}));
-const path = require('path')
+module.exports = function(db, io) {
+	
+	const express = require('express'),
+    router = express.Router(),
+    session = require('express-session');
+    router.use(session({
+    secret: 'some-873-key-test',
+    resave: true,
+    saveUninitialized: true
+    }));
+    const path = require('path')
 
-let username
-let pgp = require('pg-promise')();
-let db = pgp('postgres://postgres:QAZxsw_456@localhost:5432/rummydb')
+    let username
 
 router.use(express.static('public', {'root': './'}))
 
@@ -84,9 +84,11 @@ router.post('/login', function (request, response) {
       response.render('lobby', { usern: JSON.stringify(username)});
     })
     .catch(function (error) {
-      response.send("incorrect username/password");
+		response.send("incorrect Username/Password");
+		//response.render('incorrectLogin', { errormsg: "Incorrect Username/Password"});
     });
 
   }
-
-  module.exports = router
+  return router;
+}
+ // module.exports = router

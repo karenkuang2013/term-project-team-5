@@ -36,7 +36,7 @@ const connection = {
 const db = pgp(connection)
 
 //routes
-const index = require('./routes/index')
+const index = require('./routes/index')(db,io)
 const users = require('./routes/users')
 const lobby = require('./routes/lobby')(io)
 const game = require('./routes/game')(db, io)
