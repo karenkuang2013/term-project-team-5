@@ -70,8 +70,7 @@ router.post('/login', function (request, response) {
   // Logout endpoint
   router.get('/logout', function (request, response) {
     request.session.destroy();
-    
-    response.sendFile(path.join(__dirname,'html/index.html'));
+    response.render('login');
   });
 
 
@@ -87,7 +86,7 @@ router.post('/login', function (request, response) {
       response.redirect('/lobby');
     })
     .catch(function (error) {
-      response.send("incorrect username/password");
+      response.render('login',{errormsg: true});    
     });
 
   }
