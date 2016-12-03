@@ -86,7 +86,7 @@ router.post('/login', function (request, response) {
       response.redirect('/lobby');
     })
     .catch(function (error) {
-      response.render('login',{errormsg: true});    
+      response.render('login', {errormsg: true} );    
     });
 
   }
