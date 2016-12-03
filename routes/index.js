@@ -22,7 +22,7 @@ const auth = function(request, response, next) {
   }
   else
   {
-    return  response.sendFile(path.join(__dirname,'html/index.html'));
+    return  response.render('login');
   }
 };
 
