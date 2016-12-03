@@ -1,16 +1,17 @@
-module.exports = function(db, io) {
-	
-	const express = require('express'),
-    router = express.Router(),
-    session = require('express-session');
-    router.use(session({
-    secret: 'some-873-key-test',
-    resave: true,
-    saveUninitialized: true
-    }));
-    const path = require('path')
+const express = require('express'),
+router = express.Router(),
+session = require('express-session');
 
-    let username
+router.use(session({
+  secret: 'some-873-key-test',
+  resave: true,
+  saveUninitialized: true
+}));
+const path = require('path')
+
+let username
+let pgp = require('pg-promise')();
+let db = pgp('postgres://postgres:love4germany@localhost:5432/rummydb')
 
 router.use(express.static('public', {'root': './'}))
 
@@ -22,7 +23,7 @@ const auth = function(request, response, next) {
   }
   else
   {
-    return  response.render('login');
+    return response.render('login');  
   }
 };
 
@@ -33,15 +34,14 @@ router.get('/', function (request, response) {
 
 
 //login homepage
-router.get('/login',auth, function(request, response, next) {
-  response.render('lobby', { usern: JSON.stringify(username)});
+router.get('/login', auth, function(request, response, next) {
+  response.redirect('/lobby');
 });
 
 // Login request
 router.post('/login', function (request, response) {
-
   if (!request.body.username || !request.body.password) {
-    if( !request.session.user === username){
+    if(!request.session.user === username){
       response.send('login failed');    }
     }
     else {
@@ -79,17 +79,16 @@ router.post('/login', function (request, response) {
     db.one("select * from players where username like $1 and passwrd like $2", [request.body.username, request.body.password])
     .then(function (data) {
       username  = request.body.username;
+      
       request.session.user = request.body.username;
       request.session.admin = true;
-      response.render('lobby', { usern: JSON.stringify(username)});
+      
+      response.redirect('/lobby');
     })
     .catch(function (error) {
-		//response.send("incorrect Username/Password");
-		response.render('login',{errormsg: true});
-		//response.render('incorrectLogin', { errormsg: "Incorrect Username/Password"});
+      response.render('login',{errormsg: true});    
     });
 
   }
-  return router;
-}
- // module.exports = router
+
+  module.exports = router

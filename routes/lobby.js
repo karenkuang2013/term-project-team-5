@@ -2,19 +2,22 @@ module.exports = function(io) {
   let express = require('express');
   let router = express.Router();
   let username;
+  let session;
   router.use(express.static('public', {'root': './'}))
 
   /* GET home page. */
   router.get('/', function(req, res, next) {
-    username  = req.body.username;		
-    res.render('lobby', {});
+    session = req.session;
+    
+    if(session.user) {
+      username = session.user;
+      res.render('lobby', { usern: JSON.stringify(username) });
+    }
   });
 
   router.post('/', function(request, response, next) {
-
     username  = req.body.username;
-    res.render('lobby', {});
-
+    res.render('lobby', { usern: JSON.stringify(username) });
   });
 
   io.on('connection', function(socket) {
