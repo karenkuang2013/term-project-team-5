@@ -37,7 +37,6 @@ const db = pgp(connection)
 
 //routes
 const index = require('./routes/index')(db,io)
-const users = require('./routes/users')
 const lobby = require('./routes/lobby')(io)
 const game = require('./routes/game')(db, io)
 
@@ -47,6 +46,7 @@ app.set('view engine', 'pug')
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.use(express.static('public', {'root': './'}))
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -58,7 +58,6 @@ app.use('/login', index)
 app.use('/logout', index)
 app.use('/content', index)
 app.use('/game', game)
-app.use('/users', users)
 
 
 // catch 404 and forward to error handler
