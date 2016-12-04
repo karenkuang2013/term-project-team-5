@@ -6,20 +6,20 @@ module.exports = function(io) {
   router.use(express.static('public', {'root': './'}))
 
   /* GET home page. */
-  router.get('/', function(req, res, next) {
-    session = req.session;
+  router.get('/', function(request, response, next) {
+    session = request.session;
     
     if(session.user) {
       username = session.user;
-      res.render('lobby', { usern: JSON.stringify(username) });
+      response.render('lobby', { USERNAME: username });
     }
   });
-
+  
   router.post('/', function(request, response, next) {
-    username  = req.body.username;
-    res.render('lobby', { usern: JSON.stringify(username) });
+    username  = request.body.username;
+    
+    response.render('lobby', { USERNAME: username });
   });
-
   
   io.on('connection', function(socket) {
     socket.join('lobby');
@@ -39,27 +39,5 @@ module.exports = function(io) {
 
   });
   
-
-  /*
-  let io_lobby = io.of('lobby');
-
-  io_lobby.on('connection', function(socket) {
-    console.log("A user connected to the /lobby namespace");
-
-    socket.on('disconnect', function() {
-      console.log("user disconnected from /lobby namespace");
-    });
-
-    socket.on('chat_sent', function(username_and_message) {
-      console.log("message: " + message);
-      
-      username = username_and_message.substr(0, message.indexOf(' '));
-      message = username_and_message.substr(username_and_message.indexOf(' ')+1);
-      io_lobby.emit('chat_received', username + ": " + message);
-    });
-  });
-  */
-
-
   return router;
 }
