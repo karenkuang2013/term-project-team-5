@@ -1,4 +1,6 @@
-var socket = io();
+var uri = window.location.pathname;
+console.log(uri);
+var socket = io(uri);
  
 $(document).ready(function() {
   $('.submit_on_enter').keydown(function(event) {
@@ -33,5 +35,5 @@ socket.on('chat_received', function(msg) {
   
   ulMessages = document.getElementById("messages");
   ulMessages.appendChild(liNode);
-  });
+});
     

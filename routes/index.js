@@ -32,7 +32,6 @@ router.get('/', function (request, response) {
   response.redirect('/login');
 });
 
-
 //login homepage
 router.get('/login', auth, function(request, response, next) {
   response.redirect('/lobby');
