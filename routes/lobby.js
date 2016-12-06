@@ -6,48 +6,45 @@ module.exports = function(io) {
   router.use(express.static('public', {'root': './'}))
 
   /* GET home page. */
-  router.get('/', function(req, res, next) {
-    session = req.session;
+  router.get('/', function(request, response, next) {
+    session = request.session;
     
     if(session.user) {
       username = session.user;
-      res.render('lobby', { usern: JSON.stringify(username) });
+      response.render('lobby', { USERNAME: username });
     }
   });
-
+  
   router.post('/', function(request, response, next) {
-    username  = req.body.username;
-    res.render('lobby', { usern: JSON.stringify(username) });
+    username  = request.body.username;
+    
+    response.render('lobby', { USERNAME: username });
   });
-
+  
   io.on('connection', function(socket) {
-    console.log("A user connected to /");
+        console.log("A user connected to /");
+    
+        socket.on('disconnect', function() {
+            console.log("user disconnected from /");
+        });
+  });
+  
+  var lobby_io = io.of('/lobby/');
+  console.log("namespace: " + lobby_io);
+  lobby_io.on('connection', function(socket) {
+    console.log("A user connected to /lobby namespace");
+    
     socket.on('chat_sent', function(message){
       username = message.substr(0,message.indexOf(' '));
       message = message.substr(message.indexOf(' ')+1);
-      io.sockets.emit('chat_received', username + ": " + message);
+      
+      lobby_io.emit('chat_received', username + ": " + message);
     });
-    socket.on('disconnect', function() {
-      console.log("user disconnected from /");
-    });
-
-  });
-
-  let io_lobby = io.of('lobby');
-
-  io_lobby.on('connection', function(socket) {
-    console.log("A user connected to the /lobby namespace");
-
+    
     socket.on('disconnect', function() {
       console.log("user disconnected from /lobby namespace");
     });
-
-    socket.on('chat_sent', function(message) {
-      console.log("message: " + message);
-      io_lobby.emit('chat_received', "Socket id(" + socket.id + "): " + message);
-    });
   });
-
-
+  
   return router;
 }
