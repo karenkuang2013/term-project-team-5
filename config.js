@@ -1,6 +1,6 @@
 const config = {}
 
-config.PORT = 3000
+config.PORT = process.env.PORT || 3000
 
 config.db_host = 'localhost'
 config.db_port = 5432
