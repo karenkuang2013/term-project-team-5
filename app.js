@@ -26,14 +26,14 @@ server.listen(config.PORT)
  * Initialise pg promise
  */
 const connection = {
-  host: config.db_host,
-  port: config.db_port,
-  database: config.db_name ,
-  user: config.db_user,
-  password: config.db_pass
+  host: config.db_host_local,
+  port: config.db_port_local,
+  database: config.db_name_local ,
+  user: config.db_user_local,
+  password: config.db_pass_local
 }
 
-const db = pgp(connection)
+const db = pgp(process.env.DATABASE_URL || connection)
 
 //routes
 const index = require('./routes/index')(db,io)
