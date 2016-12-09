@@ -76,12 +76,15 @@ module.exports = function(db, io) {
 
     function checkPlayerExists(request, response)
     {
-      db.one("select * from players where username like $1 and passwrd like $2", [request.body.username, request.body.password])
+      db.one("select * from players where username like $1 and passwrd like $2 ", [request.body.username, request.body.password])
       .then(function (data) {
         username  = request.body.username;
 
         request.session.user = request.body.username;
         request.session.admin = true;
+        request.session.player_id = data.player_id;
+
+        console.log(request.session.playerid+ ' logged in');
 
         response.redirect('/lobby');
       })
