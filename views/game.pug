@@ -1,11 +1,12 @@
 extends layout
 
 block head_content
-  title Rummy Game Room
+  title Welcome to game #{gameId}
   link(rel='stylesheet', href='stylesheets/chat.css')
   script(type="text/javascript", src="/socket.io/socket.io.js")
-  script(type="text/javascript", src="js/chat.js")
-  
+  script(type="text/javascript", src="/js/chat.js")
+  script(type="text/javascript", src="/js/gameclient.js")
+
 block content
   .container
     include chat.pug

@@ -1,7 +1,8 @@
 let db
 
-exports.init = function(sdb) {
+module.exports = function(sdb) {
   db = sdb
+  return db
 }
 
 exports.resetDB = function() {
