@@ -2,17 +2,21 @@ extends layout
 
 block head_content
   title LOBBY
-  link(rel='stylesheet', href='stylesheets/chat.css')
   script(type="text/javascript", src="/socket.io/socket.io.js")
   script(type="text/javascript", src="js/chat.js")
   script(type="text/javascript", src="js/lobbyclient.js")
 
 block content
-  .container
-    img(src='img/logo.jpg')
-    include chat.pug
-    button#new-game-btn.btn.btn-primary(type='button') Create new game
-    #availableGames
-      p Available games to join:
-      br
-      ul#gameList
+  .container-fluid
+    .row.text-center
+      img(src='img/logo.jpg' style='width:25%')    
+    .row
+      .col-md-4
+        .row#availableGames.text-center(style='height:100%; border:1px solid black')
+          p Available games to join:
+        .row(style='border:1px solid black')
+          ul#gameList
+      .col-md-4
+        include chat.pug
+      .col-md-4
+        button#new-game-btn.btn.btn-primary(type='button') Create new game
