@@ -1,3 +1,5 @@
+//
+   Created by qihongkuang on 12/9/16.
 doctype html
 html(lang='en')
     head
@@ -5,8 +7,13 @@ html(lang='en')
         title Game Room
         meta(charset='utf-8')
         meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(rel='stylesheet', type='text/css', href='css/style.css')
+        link(rel='stylesheet', type='text/css', href='css/font-awesome.css')
         link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
         link(href='https://fonts.googleapis.com/css?family=Montserrat', rel='stylesheet')
+        script(type="text/javascript", src="/socket.io/socket.io.js")
+        script(type="text/javascript", src="js/chat.js")
+        script(type="text/javascript", src="js/lobbyclient.js")
         script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js')
         script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
 
@@ -33,18 +40,9 @@ html(lang='en')
             h3#margin.margin Player 2
             button#deal.btn.btn-warning.btn-md.buy-button(type='submit') Start
             h3#you You
-        #chat.col-md-3.container-fluid.bg-1.text-center
-            h3#chat_font.margin Chat
+
+        #chat_screen.col-md-3.container-fluid.bg-1.text-center
+            h3#chat_font Chat
+            include chat.pug
             button#meld.btn.btn-info.btn-sm.buy-button(type='submit') Meld/layoff
             button#cancel.btn.btn-info.btn-sm.buy-button(type='submit') Cancel
-
-
-
-
-//
-   Created by qihongkuang on 12/9/16.
-
-
-
-
-
