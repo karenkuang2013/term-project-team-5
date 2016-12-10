@@ -1,9 +1,9 @@
 .row#chat-container(style='border:1px solid black')
-  #chat-box
-    ul#messages
+  .col-md-12#chat-box
+    ul#messages.list-unstyled
 .row(style='border:1px solid black')
   .col-md-12
     form#chat-form.form-inline(method='post')
       input#chat-input.submit_on_enter.form-control(type='text', name='chat-text', autocomplete='off', style='width:85%')
-      button#sendbutton.btn.btn-default.form-control(type='submit', onclick='sendMessage()', value='Send', style='width:15%') Send
+      button#sendbutton.btn.btn-default.form-control(type='button', onclick='sendMessage()', value='Send', style='width:15%') Send
 input(style="visibility: hidden", id="target", value=USERNAME)
