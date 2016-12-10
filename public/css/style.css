@@ -1,10 +1,19 @@
-body{
+/* body{
     margin:0 auto;
     background-image: url("../img/bg.jpg");
     background-repeat: no-repeat;
     background-size: 100% 720px;
+} */
+
+html, body {
+  height:100%;
 }
-.container{
+
+.top-buffer {
+  margin-top: 50px;
+}
+
+/* .container{
     width:500px;
     height: 450px;
     text-align: center;
@@ -12,15 +21,30 @@ body{
     border-radius: 4px;
     margin: 0 auto;
     margin-top: 150px;   
+} */
+
+.background-login-form {
+  background-color: rgba(52,73,94,0.7);
+  border-radius: 4px;
 }
 
+.background-green {
+  height:100%;
+  background-image: url("../img/bg.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* 
 .container img{
     width: 200px;
     height: 120px;
     margin-top: -60px;
     margin-bottom: 30px;
 }
-
+ */
+ /* 
+ 
 input[type="text"]{
     height: 40px;
     width: 300px;
@@ -54,7 +78,7 @@ input[type="password"]{
     background-color: #fff;
     padding-left: 5px;
     
-}
+} */
 
 label{
     
@@ -444,4 +468,38 @@ a{
     display: inline-block;
     width: 69px;
     height: 100px;
+}
+
+#body {
+    font: 20px Montserrat, sans-serif;
+    line-height: 1;
+    color: #f5f6f7;
+}
+
+p {font-size: 16px;}
+
+#margin {
+    margin-bottom: 450px;
+}
+
+#game_space {
+    background-color: #1abc9c; /* Green */
+    color: #ffffff;
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+
+#nav {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+#menu{
+    color: #1abc9c !important;
 }

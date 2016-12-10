@@ -7,10 +7,10 @@ block head_content
       if(users != "undefined") alert("Incorrect Username/password")
       
 block content
-  .container-fluid
-    .row.text-center
+  .container-fluid.background-green 
+    .row.text-center.top-buffer
       img(src='img/logo.jpg' style='width:25%')
-    .row
+    .row.top-buffer
       .col-md-2
       .col-md-8 
         form(action='login', method='POST')
