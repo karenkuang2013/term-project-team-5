@@ -7,16 +7,16 @@ block head_content
   script(type="text/javascript", src="js/lobbyclient.js")
 
 block content
-  .container-fluid
-    .row.text-center
-      img(src='img/logo.jpg' style='width:25%')    
-    .row
-      .col-md-4
-        .row#availableGames.text-center(style='height:100%; border:1px solid black')
-          p Available games to join:
-        .row(style='border:1px solid black')
-          ul#gameList.list-unstyled
+  .container-fluid.background-green
+    .row.text-center.top-buffer
+      img(src='img/logo.jpg' style='width:25%').img-circle 
+    .row.top-buffer
+      .col-md-4#availableGames
+        .row.text-center
+          p Available Games
+        .row.text-center
+          ul.list-unstyled
+      .col-md-4.text-center
+        button#new-game-btn.btn.btn-primary(type='button') Create New Game
       .col-md-4
         include chat.pug
-      .col-md-4
-        button#new-game-btn.btn.btn-primary(type='button') Create new game
