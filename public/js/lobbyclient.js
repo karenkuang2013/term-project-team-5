@@ -6,7 +6,21 @@ $(document).ready(function() {
   initVariables();
   initBindEvents();
   listenSocketEvents();
+  
+  addLogout();
 });
+
+function addLogout() {
+  var navBar = document.getElementById("menu");
+  
+  liNode = document.createElement("LI");
+  liAnchor = document.createElement("a");
+  liAnchor.href = "/logout";
+  liAnchor.text = "Logout";
+  liNode.appendChild(liAnchor);
+
+  navBar.appendChild(liNode);
+}
 
 function initVariables() {
   $doc = $(document);
