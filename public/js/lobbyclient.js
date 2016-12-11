@@ -1,17 +1,28 @@
-// var chat = require('chat');
+//var chat = require('chat');
 var socket = io('/lobby');
 initChat(socket);
 
 $(document).ready(function() {
-
   initVariables();
   initBindEvents();
   listenSocketEvents();
+  
+  addLogout();
+});
 
-})
+function addLogout() {
+  var navBar = document.getElementById("menu");
+  
+  liNode = document.createElement("LI");
+  liAnchor = document.createElement("a");
+  liAnchor.href = "/logout";
+  liAnchor.text = "Logout";
+  liNode.appendChild(liAnchor);
+
+  navBar.appendChild(liNode);
+}
 
 function initVariables() {
-
   $doc = $(document);
   $gameList = $('#gameList');
 }
@@ -26,8 +37,9 @@ function listenSocketEvents() {
 };
 
 function createNewGame() {
+  console.log("CREATING NEW GAME");
   var pathname = window.location.origin + "/game/createGame";
-  console.log(pathname);
+  console.log("PATHNAME:" + pathname);
   window.location.replace(pathname);
 };
 

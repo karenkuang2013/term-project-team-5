@@ -32,8 +32,9 @@ function joinGame(gameId) {
 }
 
 function broadcastGameList(sio) {
-  sio.emit( UPDATEGAMELIST, listGameIds )
-}
+  sio.emit( UPDATEGAMELIST, listGameIds ) 
+ }
+
 
 function addGame(gameId) {
   // database.createGame(gameId)

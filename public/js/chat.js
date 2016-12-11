@@ -1,7 +1,6 @@
 var socket;
 
-function initChat(inputSocket) {
-  socket = inputSocket;
+$(document).ready(function () {
   $('.submit_on_enter').keydown(function(event) {
     // enter has keyCode = 13, change it if you want to use another button
     if (event.keyCode == 13) {
@@ -11,20 +10,26 @@ function initChat(inputSocket) {
       return false;
     }
   });
+});
+
+function initChat(inputSocket) {
+  socket = inputSocket;
 
   socket.on('chat_received', function(msg) {
-    var liNode, liText, ulMessages;
+    var liNode, liText, ulMessages, chat_box;
     console.log("Called once: " + msg);
+
+    chat_box = document.getElementById("chat-box");
+    ulMessages = document.getElementById("messages");
 
     liNode = document.createElement("LI");
     liText = document.createTextNode(msg);
-
     liNode.appendChild(liText);
 
-    ulMessages = document.getElementById("messages");
     ulMessages.appendChild(liNode);
+    
+    chat_box.scrollTop = chat_box.scrollHeight; //scrolls chat down
   });
-
 };
 
 function sendMessage() {
@@ -33,6 +38,6 @@ function sendMessage() {
   //add username to message
 	message = document.getElementById("target").value + " " + message;
   document.getElementById("chat-input").value = "";
-
+  
   socket.emit('chat_sent', message);
 }
