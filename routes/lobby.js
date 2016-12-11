@@ -36,7 +36,7 @@ module.exports = function(io) {
 
     require('./gameserver').broadcastGameList(lobby_io); 
     socket.on('chat_sent', function(message) {
-      console.log("Chat sent");
+      console.log("Chat sent from lobby");
       username = message.substr(0,message.indexOf(' '));
       message = message.substr(message.indexOf(' ')+1);
 

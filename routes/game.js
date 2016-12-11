@@ -42,50 +42,30 @@ module.exports = function(db, io) {
     gameId = req.params.gameId
     resp.render('game', { USERNAME: username, gameId: gameId })
 
-    // console.log('/game/'+gameId);
-    const game_io = io.of('/game');
-
-    game_io.on('connection', function(socket) {
-
-      socket.on('player joined', (data) => {
-        socket.join(data.gameId.toString())
-        gameServer.checkGamePlayerCount(socket, gameId)
-      })
-
-      console.log("A user connected to /game namespace, room " + gameId);
-
-      socket.on('chat_sent', function(message){
-        username = message.substr(0, message.indexOf(' '));
-        message = message.substr(message.indexOf(' ')+1);
-
-        game_io.to(gameId).emit('chat_received', username + ": " + message);
-      });
-
-      socket.on('disconnect', function() {
-        console.log("user disconnected from /game namespace");
-      });
-
-    });
-
   })
 
-  // const game_io = io.of('/game');
-  // game_io.on('connection', function(socket) {
-  //   socket.join(gameId); //check for undefined
-  //   console.log("A user connected to /game namespace, room " + gameId);
-  //
-  //   socket.on('chat_sent', function(message){
-  //     username = message.substr(0, message.indexOf(' '));
-  //     message = message.substr(message.indexOf(' ')+1);
-  //
-  //     game_io.to(gameId).emit('chat_received', username + ": " + message);
-  //   });
-  //
-  //   socket.on('disconnect', function() {
-  //     console.log("user disconnected from /game namespace");
-  //   });
-  //
-  // });
+  const game_io = io.of('/game');
+  game_io.on('connection', function(socket) {
+    socket.join(gameId); //check for undefined
+    console.log("A user connected to /game namespace, room " + gameId);
+
+    socket.on('player joined', (data) => {
+      socket.join(data.gameId.toString())
+      gameServer.checkGamePlayerCount(socket, gameId)
+    })
+
+    socket.on('chat_sent', function(message){
+      username = message.substr(0, message.indexOf(' '));
+      message = message.substr(message.indexOf(' ')+1);
+
+      game_io.to(gameId).emit('chat_received', username + ": " + message);
+    });
+
+    socket.on('disconnect', function() {
+      console.log("user disconnected from /game namespace");
+    });
+
+  });
 
   return router
 }
