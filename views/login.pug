@@ -12,15 +12,15 @@ block content
     .row.text-center.top-buffer
       img(src='img/logo.jpg' style='width:25%').img-circle
     .row.top-buffer
-      .col-md-2
-      .col-md-8.text-center
+      .col-md-4
+      .col-md-4.text-center
         form(action='login', method='POST')
           .form-group
             input.form-control(type='text', name='username', placeholder='Username')
             br
             input.form-control(type='password', name='password', placeholder='Password')
             br
-            input.form-control.btn.btn-primary(type='submit', name='submit', value='LOGIN')
+            input.btn.btn-primary(type='submit', name='submit', value='LOGIN')
         br
         a(href='register', style='color:rgba(255, 255, 255, 255)') Create a new account
-      .col-md-2    
+      .col-md-4    
