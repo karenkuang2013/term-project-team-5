@@ -1,3 +1,4 @@
+![Rummy](https://github.com/SFSU-CSC-667/term-project-team-5/blob/dev/public/img/logo.jpg "Rummy Game")
 #Rummy Game
 A Rummy card game made for CSC 667/867
 
