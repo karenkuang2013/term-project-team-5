@@ -35,6 +35,7 @@ function broadcastGameList(sio) {
   sio.emit( UPDATEGAMELIST, listGameIds ) 
  }
 
+
 function addGame(gameId) {
   // database.createGame(gameId)
   listGameIds.push(gameId)
