@@ -34,6 +34,7 @@ module.exports = function(io) {
   lobby_io.on('connection', function(socket) {
     console.log("A user connected to /lobby namespace");
 
+    require('./gameserver').broadcastGameList(lobby_io); 
     socket.on('chat_sent', function(message) {
       console.log("Chat sent");
       username = message.substr(0,message.indexOf(' '));

@@ -26,7 +26,7 @@ function createNewGame() {
   console.log("CREATING NEW GAME");
   var pathname = window.location.origin + "/game/createGame";
   console.log("PATHNAME:" + pathname);
-  //window.location.replace(pathname);
+  window.location.replace(pathname);
 };
 
 function joinGame(){
