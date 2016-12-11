@@ -11,10 +11,10 @@ block content
     .row.text-center.top-buffer
       img(src='img/logo.jpg' style='width:25%').img-circle 
     .row.top-buffer
-      .col-md-4#availableGames
-        .row.text-center
-          p Available Games
-        .row.text-center
+      .col-md-4
+        .row.text-center#availableGames
+          <span>Available Games</span>
+        .row.text-center#gamesListContainer
           ul.list-unstyled
       .col-md-4.text-center
         button#new-game-btn.btn.btn-primary(type='button') Create New Game
