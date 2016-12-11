@@ -16,7 +16,7 @@ function createNewGame() {
 
   gameId = generateRandomGameId()
   addGame(gameId)
-  broadcastGameList()
+  broadcastGameList(io)
 
   return gameId
 }
@@ -31,8 +31,8 @@ function joinGame(gameId) {
   }
 }
 
-function broadcastGameList() {
-  io.sockets.emit( UPDATEGAMELIST, listGameIds )
+function broadcastGameList(sio) {
+  sio.emit( UPDATEGAMELIST, listGameIds )
 }
 
 function addGame(gameId) {
