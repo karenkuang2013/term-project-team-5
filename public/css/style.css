@@ -14,27 +14,41 @@ a {
 }
 
 #availableGames .row {
-  color: rgba(255, 255, 255, 255);
-  border-bottom: 1px solid white;
-  border-top: 1px solid white;
+  color: white;
+  border: 5px solid rgba(52,73,94,0.7);
+  background-color: white;
+  border-radius: 5px;
+  overflow-y: scroll; 
   height: 100%;
 }
 
 #chat-container { 
   width: 100%; 
-  height: 90%;
-  color: white;
+  height: 250px;
+  color: black;
 }
-     
+
 #chat-box { 
-  border:1px solid white; 
+  width: 100%; 
+  height: 100%; 
+  margin-right: 15px;
+  margin-left: 15px;
+  border: 5px solid #ff8c00;
+  background-color: white;
+  border-radius: 15px;
   overflow-y: scroll; 
+  position: relative; 
   text-align: left;
 }
      
-#messages li:nth-child(odd) { background: #eee; }
-     
+#messages li:nth-child(odd) { 
+  background: #fffacd; 
+}
 
+#send-button, #chat-input {
+  margin-top: 10px;
+}
+     
 /* HELPER CLASSES */
 
 .top-buffer {
@@ -112,7 +126,7 @@ label{
     
 }
 
-.btn-login{
+/* .btn-login{
     padding: 15px 30px;
     cursor: pointer;
     color: #fff;
@@ -121,7 +135,7 @@ label{
     background-color: #2ECC71;
     border-bottom: 4px solid #27A760;
     margin-bottom: 20px;
-}
+} */
 
 #1{
     background: url(../img/playcard.png) 0 0;
