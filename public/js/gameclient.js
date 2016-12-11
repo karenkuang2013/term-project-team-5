@@ -10,6 +10,6 @@ $(document).ready(function() {
 
   socket.on('start game', (data) => {
     console.log(data.msg);
-  })
+  });
 
-})
+});

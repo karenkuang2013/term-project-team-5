@@ -1,17 +1,14 @@
-// var chat = require('chat');
+//var chat = require('chat');
 var socket = io('/lobby');
 initChat(socket);
 
 $(document).ready(function() {
-
   initVariables();
   initBindEvents();
   listenSocketEvents();
-
-})
+});
 
 function initVariables() {
-
   $doc = $(document);
   $gameList = $('#gameList');
 }
