@@ -23,9 +23,10 @@ function listenSocketEvents() {
 };
 
 function createNewGame() {
+  console.log("CREATING NEW GAME");
   var pathname = window.location.origin + "/game/createGame";
-  console.log(pathname);
-  window.location.replace(pathname);
+  console.log("PATHNAME:" + pathname);
+  //window.location.replace(pathname);
 };
 
 function joinGame(){
