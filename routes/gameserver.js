@@ -1,11 +1,13 @@
 let io
-let database
 let listGameIds = []
 const { UPDATEGAMELIST } = require('../constants/events')
+const shuffle = require('knuth-shuffle').knuthShuffle
+const dbjs = require('./database')
+let database
 
 function init(sdb, sio) {
-  database = require('./database')(sdb)
   io = sio
+  database = new dbjs(sdb)
 }
 
 function generateRandomGameId() {
@@ -17,6 +19,10 @@ function createNewGame() {
   gameId = generateRandomGameId()
   addGame(gameId)
   broadcastGameList(io)
+  database.createGame(gameId)
+  .then((data) => {
+     database.createGamePlayer(data.game_id, playerId )
+  })
 
   return gameId
 }
@@ -32,7 +38,7 @@ function joinGame(gameId) {
 }
 
 function broadcastGameList(sio) {
-  sio.emit( UPDATEGAMELIST, listGameIds ) 
+  sio.emit( UPDATEGAMELIST, listGameIds )
  }
 
 
@@ -41,14 +47,5 @@ function addGame(gameId) {
   listGameIds.push(gameId)
 }
 
-function checkGamePlayerCount(socket, gameId) {
-  let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
 
-  if(playerCount == 2) {
-    io.to(gameId.toString()).emit('start game', { msg: "wuhoo" })
-    // startgame(data.gameId);
-  }
-
-}
-
-module.exports = { init, broadcastGameList, addGame, createNewGame, joinGame, checkGamePlayerCount }
+module.exports = { init, broadcastGameList, addGame, createNewGame, joinGame }
