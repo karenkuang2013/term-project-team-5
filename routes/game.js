@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT }
     = require('../constants/events')
 
   const gameServer = require('./gameserver')
@@ -67,7 +67,7 @@ module.exports = function(db, io) {
   /* Socket Operations */
   const game_io = io.of('/game')
   game_io.on('connection', function(socket) {
-  
+
     socket.emit(WELCOME, {playerId: playerId})
 
     const newPlayerJoined = (data) => {
@@ -120,12 +120,21 @@ module.exports = function(db, io) {
 
     }
 
+    const updateGame = (json) => {
+
+      game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
+
+    }
+
       /*New player joined /game */
       socket.on(PLAYER_JOINED, newPlayerJoined)
+      socket.on(UPDATE_CLIENT, updateGame)
 
       socket.on('disconnect', () => {
         console.log("user disconnected from /game namespace");
-        listGameIds.splice(listGameIds.indexOf(gameId), 1)
+        if(typeof gameId != 'undefined') {
+          listGameIds.splice(listGameIds.indexOf(gameId), 1)
+        }
         broadcastGameList(io)
 
       });
