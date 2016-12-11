@@ -1,4 +1,4 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -9,12 +9,13 @@ var game = {
   gameId : gameId = uri.split("/")[2],
 }
 
+var gameJSON
+
 const intializeSocket = () => {
   socket.on( WAIT, displayWait )
 }
 
 const displayWait = (data) => {
-  console.log('displayWait');
   // $('#gameArea').hide()
 }
 
@@ -32,33 +33,50 @@ $(document).ready(function() {
   })
 
   socket.on(STARTGAME, (json) => {
+    gameJSON = json
     console.log(json);
     updateGame(json);
   })
 
-  socket.on(TRANSFER_TO_HAND, (data) => {
+  socket.on(UPDATE_SERVER, updateGame)
 
-    updateGame(data);
-
-  })
+  // socket.on(TRANSFER_TO_HAND, (data) => {
+  //
+  //   updateGame(data);
+  //
+  // })
 
 })
 
 
 const bindEvents = () => {
-  // $('#Deck a').on('click', transferCard)
+  $('#Deck a').on('click', transferCard)
 }
 
 const transferCard = (e) => {
   var card = $(e.target).attr('cardvalue');
   console.log('player '+game.playerId+' clicked '+card);
-  socket.emit(WITHDRAW_CARD, {game: game, cardId: card})
+
+  var cardId = gameJSON.deck.pop()
+  gameJSON.playerHands[game.playerId].push(cardId)
+  // var newPlayerCard = "<div id='card"+cardId+"' cardvalue="+cardId+" />"
+  // $('#PlayerHand').append(newPlayerCard)
+  // var newCardDeck = "<a><div id='card53' cardvalue="+gameJSON.deck[gameJSON.deck.length-1]+" /></a>";
+  // $('#Deck').html(newCardDeck)
+
+  emitUpdate();
+  bindEvents();
+}
+
+const emitUpdate = () => {
+  socket.emit(UPDATE_CLIENT, gameJSON)
 }
 
 const updateGame = (json) => {
+
+  gameJSON = json
   var playerHand = ""
   var opponentHand = ""
-  console.log(json.playerHands[game.playerId]);
 
   var players = Object.keys(json.playerHands)
 
@@ -79,9 +97,11 @@ const updateGame = (json) => {
 
   var deck = ""
   deck = "<a><div id='card53' cardvalue="+json.deck[json.deck.length-1]+" /></a>";
-  console.log(deck);
-
   $('#Deck').html(deck)
+
+  var discardPile = ""
+  discardPile = "<a><div id='card"+json.discard_pile[0]+"' cardvalue="+json.discard_pile[0]+" /></a>";
+  $('#DiscardPile').html(discardPile)
 
   bindEvents();
 
