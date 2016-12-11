@@ -16,11 +16,11 @@ Go to http://localhost:3000 on browser
 ```
 ##Game also available online at:
 ```
-https://agile-gorge-78443.herokuapp.com
+[Heroku](https://agile-gorge-78443.herokuapp.com)
 ```
 
 ###Collaborators:
 1. Felix
-2. Rajat
+2. [Rajat](https://github.com/RajatArora08)
 3. Qihong
 4. Anu
