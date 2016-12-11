@@ -6,11 +6,14 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "build": "browserify clientjs/gameclient.js -o public/js/bundle.js",
+    "build:dev": "watchify clientjs/gameclient.js -o public/js/bundle.js"
   },
   "author": "667-Team 5",
   "dependencies": {
     "body-parser": "~1.15.2",
+    "browserify": "^13.1.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "express": "~4.14.0",
@@ -21,6 +24,7 @@
     "pg-promise": "^5.4.4",
     "pug": "^2.0.0-beta6",
     "serve-favicon": "~2.3.0",
-    "socket.io": "^1.5.1"
+    "socket.io": "^1.5.1",
+    "watchify": "^3.7.0"
   }
 }

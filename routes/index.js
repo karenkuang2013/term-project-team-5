@@ -84,7 +84,7 @@ module.exports = function(db, io) {
         request.session.admin = true;
         request.session.player_id = data.player_id;
 
-        console.log(request.session.playerid+ ' logged in');
+        console.log(request.session.player_id+ ' logged in');
 
         response.redirect('/lobby');
       })

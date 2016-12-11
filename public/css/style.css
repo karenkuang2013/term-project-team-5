@@ -19,7 +19,7 @@ a {
   height: 100%;
 }
 
-#gamesListContainer {  
+#gamesListContainer {
   margin-right: 15px;
   margin-left: 15px;
   color: black;
@@ -29,33 +29,33 @@ a {
   height: 250px;
 }
 
-#chat-container { 
-  width: 100%; 
+#chat-container {
+  width: 100%;
   height: 250px;
   color: black;
 }
 
-#chat-box { 
-  width: 100%; 
-  height: 100%; 
+#chat-box {
+  width: 100%;
+  height: 100%;
   margin-right: 15px;
   margin-left: 15px;
   border: 2px solid #ff8c00;
   background-color: white;
   border-radius: 15px;
-  overflow-y: scroll; 
-  position: relative; 
+  overflow-y: scroll;
+  position: relative;
   text-align: left;
 }
-     
-#messages li:nth-child(odd) { 
-  background: #fffacd; 
+
+#messages li:nth-child(odd) {
+  background: #fffacd;
 }
 
 #send-button, #chat-input {
   margin-top: 10px;
 }
-     
+
 /* HELPER CLASSES */
 
 .top-buffer {
@@ -74,371 +74,371 @@ a {
   background-size: 100% 100%;
 }
 
-#1{
+#card1{
     background: url(../img/playcard.png) 0 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#2{
+#card2{
     background: url(../img/playcard.png) -69px 0;
     display:inline-block;
     width: 69px;
     height: 100px;
 }
 
-#3{
+#card3{
     background: url(../img/playcard.png) -138px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#4 {
+#card4{
     background: url(../img/playcard.png) -207px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#5{
+#card5{
     background: url(../img/playcard.png) -276px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#6{
+#card6{
     background: url(../img/playcard.png) -345px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#7{
+#card7{
     background: url(../img/playcard.png) -414px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#8{
+#card8{
     background: url(../img/playcard.png) -483px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#9{
+#card9{
     background: url(../img/playcard.png) -552px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#10{
+#card10{
     background: url(../img/playcard.png) -621px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#11{
+#card11{
     background: url(../img/playcard.png) -690px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#12{
+#card12{
     background: url(../img/playcard.png) -759px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#13{
+#card13{
     background: url(../img/playcard.png) -828px 0;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#14{
+#card14{
     background: url(../img/playcard.png) 0px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#15{
+#card15{
     background: url(../img/playcard.png) -69px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#16{
+#card16{
     background: url(../img/playcard.png) -138px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#17{
+#card17{
     background: url(../img/playcard.png) -207px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#18{
+#card18{
     background: url(../img/playcard.png) -276px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#19{
+#card19{
     background: url(../img/playcard.png) -345px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#20{
+#card20{
     background: url(../img/playcard.png) -414px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#21{
+#card21{
     background: url(../img/playcard.png) -483px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#22{
+#card22{
     background: url(../img/playcard.png) -552px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#23{
+#card23{
     background: url(../img/playcard.png) -621px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#24{
+#card24{
     background: url(../img/playcard.png) -690px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#25{
+#card25{
     background: url(../img/playcard.png) -759px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#26{
+#card26{
     background: url(../img/playcard.png) -828px -100px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#27{
+#card27{
     background: url(../img/playcard.png) 0px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#28{
+#card28{
     background: url(../img/playcard.png) -69px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#29{
+#card29{
     background: url(../img/playcard.png) -138px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#30{
+#card30{
     background: url(../img/playcard.png) -207px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#31{
+#card31{
     background: url(../img/playcard.png) -276px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#32{
+#card32{
     background: url(../img/playcard.png) -345px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#33{
+#card33{
     background: url(../img/playcard.png) -414px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#34{
+#card34{
     background: url(../img/playcard.png) -483px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#35{
+#card35{
     background: url(../img/playcard.png) -552px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#36{
+#card36{
     background: url(../img/playcard.png) -621px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#37{
+#card37{
     background: url(../img/playcard.png) -690px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#38{
+#card38{
     background: url(../img/playcard.png) -759px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#39{
+#card39{
     background: url(../img/playcard.png) -828px -200px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#40{
+#card40{
     background: url(../img/playcard.png) 0px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#41{
+#card41{
     background: url(../img/playcard.png) -69px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#42{
+#card42{
     background: url(../img/playcard.png) -138px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#43{
+#card43{
     background: url(../img/playcard.png) -207px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#44{
+#card44{
     background: url(../img/playcard.png) -276px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#45{
+#card45{
     background: url(../img/playcard.png) -345px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#46{
+#card46{
     background: url(../img/playcard.png) -414px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#47{
+#card47{
     background: url(../img/playcard.png) -483px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#48{
+#card48{
     background: url(../img/playcard.png) -552px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#49{
+#card49{
     background: url(../img/playcard.png) -621px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#50{
+#card50{
     background: url(../img/playcard.png) -690px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#51{
+#card51{
     background: url(../img/playcard.png) -759px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#52{
+#card52{
     background: url(../img/playcard.png) -828px -300px;
     display: inline-block;
     width: 69px;
     height: 100px;
 }
 
-#53{
+#card53{
     background: url(../img/playcard.png) 0px -400px;
     display: inline-block;
     width: 69px;

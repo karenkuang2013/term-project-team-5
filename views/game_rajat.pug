@@ -1,0 +1,25 @@
+extends layout
+
+block head_content
+  title Welcome to Game Room #{gameId}
+  script(type="text/javascript", src="/socket.io/socket.io.js")
+  script(type="text/javascript", src="/js/chat.js")
+  script(type="text/javascript", src="/js/bundle.js")
+
+block content
+  include navbar.pug
+  
+  #gameArea
+    p Opponent hand:
+    br
+    #OpponentHand
+    p Deck:
+    #Deck
+    p Discard Pile:
+    br
+    #DiscardPile
+    p Player hand:
+    br
+    #PlayerHand
+  #wait
+    p Waiting for more players to join
