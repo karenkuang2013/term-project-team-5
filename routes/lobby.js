@@ -1,8 +1,11 @@
-module.exports = function(io) {
+module.exports = function(db, io) {
   let express = require('express');
   let router = express.Router();
   let username;
   let session;
+  const dbjs = require('./database')
+  const database = new dbjs(db)
+  const { UPDATEGAMELIST } = require('../constants/events')
   router.use(express.static('public', {'root': './'}))
 
   /* GET home page. */
@@ -32,8 +35,9 @@ module.exports = function(io) {
   console.log("namespace: " + lobby_io);
   lobby_io.on('connection', function(socket) {
     console.log("A user connected to /lobby namespace");
-    require('./gameserver').broadcastGameList(lobby_io);
-    
+
+    broadcastGameList(socket)
+
     socket.on('chat_sent', function(message){
       username = message.substr(0,message.indexOf(' '));
       message = message.substr(message.indexOf(' ')+1);
@@ -45,6 +49,14 @@ module.exports = function(io) {
       console.log("user disconnected from /lobby namespace");
     });
   });
+
+  const broadcastGameList = (socket) => {
+    database.getAvailableGames()
+    .then ( (listGameIds) => {
+      console.log(listGameIds);
+      socket.emit( UPDATEGAMELIST, listGameIds )
+    })
+  }
 
   return router;
 }

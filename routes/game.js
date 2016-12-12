@@ -14,7 +14,6 @@ module.exports = function(db, io) {
   const gameServer = require('./gameserver')
   gameServer.init(db, io)
 
-  let listGameIds = []
   let playerId
 
   /* Route for create Game */
@@ -22,12 +21,11 @@ module.exports = function(db, io) {
     console.log(request.session.player_id + ' requested new game')
 
     gameId = generateRandomGameId()
-    listGameIds.push(gameId)
-    broadcastGameList(io)
     database.createGame(gameId)
     .then ((result) => {
       database.createGamePlayer(gameId, request.session.player_id)
       .then (() => {
+        broadcastGameList()
         response.redirect('/game/' + gameId)
       })
     })
@@ -56,9 +54,13 @@ module.exports = function(db, io) {
     return ( Math.random() * 100000 ) | 0
   }
 
-  const broadcastGameList = (sio) => {
-    console.log(listGameIds);
-    io.of('/lobby').emit( UPDATEGAMELIST, listGameIds )
+  const broadcastGameList = () => {
+    database.getAvailableGames()
+    .then ( (listGameIds) => {
+      console.log(listGameIds);
+      io.of('/lobby').emit( UPDATEGAMELIST, listGameIds )
+    })
+
   }
 
 
@@ -81,8 +83,7 @@ module.exports = function(db, io) {
           game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
         })
 
-        listGameIds.splice(listGameIds.indexOf(gameId), 1)
-        broadcastGameList(io)
+        broadcastGameList()
       }
       else {
         game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )
@@ -133,9 +134,11 @@ module.exports = function(db, io) {
       socket.on('disconnect', () => {
         console.log("user disconnected from /game namespace");
         if(typeof gameId != 'undefined') {
-          listGameIds.splice(listGameIds.indexOf(gameId), 1)
+          database.updateAvailableGames(gameId)
+          .then (() => {
+            broadcastGameList()
+          })
         }
-        broadcastGameList(io)
 
       });
 
