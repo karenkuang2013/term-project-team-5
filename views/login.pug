@@ -3,8 +3,20 @@ extends layout
 block head_content
   title Login
   script(type='text/javascript').
+    window.onload = function() {
       var users = !{JSON.stringify(errormsg)}
-      if(users != "undefined") alert("Incorrect Username/password")
+      if(users != "undefined") {
+        var form = document.getElementById("login-error");
+        var alertDiv = document.createElement("DIV");
+        var alertText = document.createTextNode("Incorrect Username or Password");
+        
+        alertDiv.classList.add("alert", "alert-danger", "text-center");
+        alertDiv.setAttribute("role", "alert");
+        alertDiv.appendChild(alertText);
+        
+        form.appendChild(alertDiv);
+      }
+    }      
       
 block content
   include navbar.pug
@@ -14,13 +26,15 @@ block content
     .row.top-buffer
       .col-md-4
       .col-md-4.text-center
-        form(action='login', method='POST')
-          .form-group
-            input.form-control(type='text', name='username', placeholder='Username')
-            br
-            input.form-control(type='password', name='password', placeholder='Password')
-            br
-            input.btn.btn-primary(type='submit', name='submit', value='LOGIN')
-        br
-        a(href='register', style='color:rgba(255, 255, 255, 255)') Create a new account
+        .row#login-error
+        .row
+          form(action='login', method='POST')
+            .form-group
+              input.form-control(type='text', name='username', placeholder='Username')
+              br
+              input.form-control(type='password', name='password', placeholder='Password')
+              br
+              input.btn.btn-primary(type='submit', name='submit', value='LOGIN')
+          br
+          a(href='register', style='color:rgba(255, 255, 255, 255)') Create a new account
       .col-md-4    
