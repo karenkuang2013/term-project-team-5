@@ -32,6 +32,35 @@ let database = function (db) {
       console.log(err)
     })
   }
+  
+   this.checkPlayerExists = (request, response) =>{   
+    return db.one("select * from players where username like $1 and passwrd like $2 ", [request.body.username, request.body.password])
+    .then(function (data) {
+      username  = request.body.username;
+
+      request.session.user = request.body.username;
+      request.session.admin = true;
+      request.session.player_id = data.player_id;
+
+      console.log(request.session.player_id+ ' logged in');
+
+      response.redirect('/lobby');
+    
+    })
+    .catch(function (error) {
+      response.render('login', {errormsg: true} );
+    });
+   }
+   
+   this.registerNewUser = (request, response) => {
+       return db.none("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5)",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
+    .then(function () {
+      response.redirect('/login');
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+   }
 }
 
 module.exports = database;

@@ -11,10 +11,11 @@ module.exports = function(db, io) {
   const path = require('path')
 
   let username
-  // let pgp = require('pg-promise')();
-  // let db = pgp('postgres://postgres:love4germany@localhost:5432/rummydb')
 
   router.use(express.static('public', {'root': './'}))
+  
+  const dbjs = require('./database')
+  const database = new dbjs(db)
 
   // Authentication and Authorization Middleware
   const auth = function(request, response, next) {
@@ -52,18 +53,12 @@ module.exports = function(db, io) {
 
   //register page
   router.get('/register', function (request, response) {
-    response.render('registration');//sendFile(path.join(__dirname,'html/register.html'));
+    response.render('registration');
   });
 
   //register page
   router.post('/register', function (request, response) {
-    db.none("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5)",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
-    .then(function () {
-      response.redirect('/login');
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    database.registerNewUser(request,response)
   });
 
   // Logout endpoint
@@ -75,21 +70,7 @@ module.exports = function(db, io) {
 
   function checkPlayerExists(request, response)
   {
-    db.one("select * from players where username like $1 and passwrd like $2 ", [request.body.username, request.body.password])
-    .then(function (data) {
-      username  = request.body.username;
-
-      request.session.user = request.body.username;
-      request.session.admin = true;
-      request.session.player_id = data.player_id;
-
-      console.log(request.session.player_id+ ' logged in');
-
-     response.redirect('/lobby');
-    })
-    .catch(function (error) {
-      response.render('login', {errormsg: true} );
-    });
+      database.checkPlayerExists(request,response)
   }
 
   return router;
