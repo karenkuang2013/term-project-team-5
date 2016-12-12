@@ -49,6 +49,10 @@ a {
   text-align: left;
 }
 
+#chat{
+    overflow-y: scroll;
+}
+
 #messages li:nth-child(odd) {
   background: #fffacd;
 }
@@ -461,6 +465,7 @@ p {font-size: 16px;}
 #game_space {
     background-color: #1abc9c; /* Green */
     color: #ffffff;
+    text-align: center;
     padding-top: 5px;
     padding-bottom: 15px;
 }

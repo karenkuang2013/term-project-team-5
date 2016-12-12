@@ -1,8 +1,8 @@
 let database = function (db) {
 
   this.createGame = (gameId) => {
-    return db.one("insert into games(game_id, game_date, card_id_discarded) values($1, $2, $3) returning game_id ",
-    [gameId, new Date(), 1])
+    return db.one("insert into games(game_id, game_date, card_id_discarded, is_available) values($1, $2, $3, $4) returning game_id ",
+    [gameId, new Date(), 1, true])
     .then((data) => {
       console.log('gameId= '+data.game_id+' inserted to Games table')
       return data
@@ -61,6 +61,33 @@ let database = function (db) {
       console.log(error);
     });
    }
+
+  this.getAvailableGames = () => {
+    return db.any("Select game_id from games where is_available = true ")
+    .then ( (result) => {
+      let listGameIds = []
+
+      result.forEach( (value) => {
+        listGameIds.push(value.game_id)
+      })
+
+      return listGameIds
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+  }
+
+  this.updateAvailableGames = (gameId) => {
+    return db.none("update games set is_available = false where game_id = $1", [gameId])
+    .then (() => {
+      console.log('Removed game ' + gameId + ' from available games');
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+  }
+
 }
 
 module.exports = database;
