@@ -1,31 +1,30 @@
-doctype html
-//
-  To change this license header, choose License Headers in Project Properties.
-  To change this template file, choose Tools | Templates
-  and open the template in the editor.
-html
-  head
-    title Registration
-    link(rel='stylesheet', type='text/css', href='../css/style.css')
-    link(rel='stylesheet', type='text/css', href='../css/font-awesome.css')
-    meta(charset='UTF-8')
-    script(src='js/validateRegister.js')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-  body
-    #register.container
-      img(src='../img/logo.jpg')
-      form(name='register', action='register', method='POST', onsubmit='return validateForm()')
-        .form-input
-          input#firstname(type='text', name='firstname', placeholder='First name', required='')
-        .form-input
-          input#lastname(type='text', name='lastname', placeholder='Last name', required='')
-        .form-input
-          input#email(type='email', name='email', placeholder='Email id')
-        .form-input
-          input#username(type='text', name='username', placeholder='Username', required='')
-        .form-input
-          input#password(type='password', name='password', placeholder='Password', required='')
-        .form-input
-          input#confirm(type='password', name='confirm', placeholder='Confirm Password', required='')
-        input.btn-login(type='submit', name='submit', value='CREATE ACCOUNT')
-        br
+extend layout
+
+block head_content
+  title Registration
+  script(src='js/validateRegister.js')
+  
+block content
+  include navbar.pug
+  #register.container-fluid.background-green
+    .row.text-center.bottom-buffer
+      img(src='img/logo.jpg' style='width:25%; margin-top:15px').img-circle
+    .row
+      .col-md-4
+      .col-md-4.text-center
+        form(name='register', action='register', method='POST', onsubmit='return validateForm()')
+          .form-group
+            input#firstname.form-control(type='text', name='firstname', placeholder='First name', required='')
+            br
+            input#lastname.form-control(type='text', name='lastname', placeholder='Last name', required='')
+            br
+            input#email.form-control(type='email', name='email', placeholder='Email id')
+            br
+            input#username.form-control(type='text', name='username', placeholder='Username', required='')
+            br
+            input#password.form-control(type='password', name='password', placeholder='Password', required='')
+            br
+            input#confirm.form-control(type='password', name='confirm', placeholder='Confirm Password', required='')
+            br
+            input.btn.btn-primary(type='submit', name='submit', value='CREATE ACCOUNT')
+      .col-md-4
