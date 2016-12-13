@@ -35,17 +35,8 @@ let database = function (db) {
   
    this.checkPlayerExists = (request, response) =>{   
     return db.one("select * from players where username like $1 and passwrd like $2 ", [request.body.username, request.body.password])
-    .then(function (data) {
-      username  = request.body.username;
-
-      request.session.user = request.body.username;
-      request.session.admin = true;
-      request.session.player_id = data.player_id;
-
-      console.log(request.session.player_id+ ' logged in');
-
-      response.redirect('/lobby');
-    
+    .then((data) => {
+        return data
     })
     .catch(function (error) {
       response.render('login', {errormsg: true} );

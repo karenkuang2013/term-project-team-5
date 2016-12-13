@@ -19,13 +19,14 @@ module.exports = function(db, io) {
 
   // Authentication and Authorization Middleware
   const auth = function(request, response, next) {
+    
     if (request.session && request.session.user === username && request.session.admin)
     {
       return next();
     }
     else
     {
-      return response.render('login');
+      return response.render('login',{errormsg: false});
     }
   };
 
@@ -64,13 +65,24 @@ module.exports = function(db, io) {
   // Logout endpoint
   router.get('/logout', function (request, response) {
     request.session.destroy();
-    response.render('login');
+    response.render('login',{ errormsg: false});
   });
 
 
   function checkPlayerExists(request, response)
   {
       database.checkPlayerExists(request,response)
+      .then((data) => {
+          
+      username  = request.body.username;
+      request.session.user = request.body.username;
+      request.session.admin = true;
+      request.session.player_id = data.player_id;
+
+      console.log(request.session.player_id+ ' logged in');
+
+      response.redirect('/lobby');
+   });
   }
 
   return router;
