@@ -25,28 +25,31 @@ module.exports = function(db, io) {
   });
 
   io.on('connection', function(socket) {
-        console.log("A user connected to /");
-        socket.on('disconnect', function() {
-            console.log("user disconnected from /");
-        });
+    console.log("A user connected to /");
+    socket.on('disconnect', function() {
+    console.log("user disconnected from /");
+    });
   });
 
   var lobby_io = io.of('/lobby');
   console.log("namespace: " + lobby_io);
+  
   lobby_io.on('connection', function(socket) {
     console.log("A user connected to /lobby namespace");
-
-    broadcastGameList(socket)
-
-    socket.on('chat_sent', function(message){
-      username = message.substr(0,message.indexOf(' '));
-      message = message.substr(message.indexOf(' ')+1);
+    
+    require('./gameserver').broadcastGameList(lobby_io);
+    lobby_io.emit("user_entered_lobby", "User " + username + " has entered the room...");
+    
+    socket.on('chat_sent', function(message) {
+     username = message.substr(0,message.indexOf(' '));
+     message = message.substr(message.indexOf(' ')+1);
 
       lobby_io.emit('chat_received', username + ": " + message);
     });
 
     socket.on('disconnect', function() {
       console.log("user disconnected from /lobby namespace");
+      lobby_io.emit("user_left_lobby", "User " + username + " has left the room...");
     });
   });
 
