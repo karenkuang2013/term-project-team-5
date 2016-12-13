@@ -1,8 +1,8 @@
 let database = function (db) {
 
   this.createGame = (gameId) => {
-    return db.one("insert into games(game_id, game_date, card_id_discarded) values($1, $2, $3) returning game_id ",
-    [gameId, new Date(), 1])
+    return db.one("insert into games(game_id, game_date, card_id_discarded, is_available) values($1, $2, $3, $4) returning game_id ",
+    [gameId, new Date(), 1, true])
     .then((data) => {
       console.log('gameId= '+data.game_id+' inserted to Games table')
       return data
@@ -32,6 +32,76 @@ let database = function (db) {
       console.log(err)
     })
   }
+  
+   this.checkPlayerExists = (request, response) =>{   
+    return db.one("select * from players where username like $1 and passwrd like $2 ", [request.body.username, request.body.password])
+    .then((data) => {
+        return data
+    })
+    .catch(function (error) {
+      response.render('login', {errormsg: true} );
+    });
+   }
+   
+   this.registerNewUser = (request, response) => {
+       return db.none("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5)",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
+    .then(function () {
+      response.redirect('/login');
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+   }
+
+  this.getAvailableGames = () => {
+    return db.any("Select game_id from games where is_available = true ")
+    .then ( (result) => {
+      let listGameIds = []
+
+      result.forEach( (value) => {
+        listGameIds.push(value.game_id)
+      })
+
+      return listGameIds
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+  }
+
+  this.updateAvailableGames = (gameId) => {
+    return db.none("update games set is_available = false where game_id = $1", [gameId])
+    .then (() => {
+      console.log('Removed game ' + gameId + ' from available games');
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+  }
+  
+  this.addGameStateToDb = (json, isfirstTime) => {
+      if(!isfirstTime)
+      {
+          // delete current rows related to given gameid and playerid
+      }
+      let gameid = json.gameId.toString()
+      let players = Object.keys(json.playerHands)
+      players.forEach((p) => {
+      let playerId = p.toString()
+      json.playerHands[p].forEach((value) => {
+          let cardid = value
+          db.none("INSERT INTO gameplayercards VALUES($1, $2, $3, $4)",   [gameid, cardid, playerId, false])
+           .then (() => {
+            console.log('Initial state added ' + gameid);
+            })
+           .catch(function(err) {
+            console.log(err)
+            })
+      })
+      })
+      
+  }
+
 }
 
 module.exports = database;
