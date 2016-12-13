@@ -115,7 +115,7 @@ module.exports = function(db, io) {
           },
           turn : players[0].player_id
         }
-
+        database.addGameStateToDb(json, true)
         return json
       });
 
