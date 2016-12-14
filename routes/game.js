@@ -16,6 +16,7 @@ module.exports = function(db, io) {
 
   let playerId;
   let username;
+  let session;
 
   /* Route for create Game */
   router.get( '/createGame', ( request, response ) => {
@@ -45,8 +46,9 @@ module.exports = function(db, io) {
   /* Route for game room */
   router.get('/:gameId', (req, resp) => {
     gameId = req.params.gameId
+    session = req.session;
     playerId = req.session.player_id
-    username = req.session.user;
+    username = session.user;
     
     resp.render('game_rajat', { USERNAME:username, name:req.session.user, playerId: req.session.player_id, gameId: gameId})
   })
@@ -131,9 +133,10 @@ module.exports = function(db, io) {
 
     socket.on('disconnect', () => {
       console.log("user disconnected from /game namespace");
-      game_io.to(gameId).emit("user_left_chat", "User " + name + " has left the room...");
 
       if(typeof gameId != 'undefined') {
+        game_io.to(gameId).emit("user_left_chat", "User " + session.user + " has left the room...");
+
         database.updateAvailableGames(gameId)
         .then (() => {
           broadcastGameList()
@@ -143,11 +146,13 @@ module.exports = function(db, io) {
     });
 
     socket.on('chat_sent', function(message) {
-      username = message.substr(0, message.indexOf(' '));
+      user = message.substr(0, message.indexOf(' '));
       msg = message.substr(message.indexOf(' ')+1);
         
       console.log("CHAT:" + message)
-      game_io.to(gameId).emit('chat_received', username + ": " + msg);
+      if(typeof gameId != 'undefined') {
+        game_io.to(gameId).emit('chat_received', user + ": " + msg);
+      }
     });
 });
 
