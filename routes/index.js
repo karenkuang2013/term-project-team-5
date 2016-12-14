@@ -26,13 +26,13 @@ module.exports = function(db, io) {
     }
     else
     {
-      return response.render('login',{errormsg: true});
+      return response.render('login',{errormsg: false});
     }
   };
 
   // Get content endpoint
   router.get('/', function (request, response) {
-    response.redirect('/login');
+    response.redirect('/lobby');
   });
 
   //login homepage

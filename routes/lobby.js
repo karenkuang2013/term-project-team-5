@@ -16,6 +16,9 @@ module.exports = function(db, io) {
       username = session.user;
       response.render('lobby', { USERNAME: username });
     }
+    else {
+      response.redirect('/login');
+    }
   });
 
   router.post('/', function(request, response, next) {
