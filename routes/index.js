@@ -20,13 +20,13 @@ module.exports = function(db, io) {
   // Authentication and Authorization Middleware
   const auth = function(request, response, next) {
     
-    if (request.session && request.session.user === username && request.session.admin)
+    if (request.session && (request.session.user === username) && request.session.admin)
     {
       return next();
     }
     else
     {
-      return response.render('login',{errormsg: false});
+      return response.render('login',{errormsg: true});
     }
   };
 
