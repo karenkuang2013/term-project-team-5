@@ -38,7 +38,7 @@ module.exports = function(db, io) {
     console.log("A user connected to /lobby namespace");
     
     require('./gameserver').broadcastGameList(lobby_io);
-    lobby_io.emit("user_entered_lobby", "User " + username + " has entered the room...");
+    lobby_io.emit("user_entered_chat", "User " + username + " has entered the room...");
     
     socket.on('chat_sent', function(message) {
      username = message.substr(0,message.indexOf(' '));
@@ -49,7 +49,7 @@ module.exports = function(db, io) {
 
     socket.on('disconnect', function() {
       console.log("user disconnected from /lobby namespace");
-      lobby_io.emit("user_left_lobby", "User " + username + " has left the room...");
+      lobby_io.emit("user_left_chat", "User " + username + " has left the room...");
     });
   });
 

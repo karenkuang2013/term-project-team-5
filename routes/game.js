@@ -14,7 +14,8 @@ module.exports = function(db, io) {
   const gameServer = require('./gameserver')
   gameServer.init(db, io)
 
-  let playerId
+  let playerId;
+  let username;
 
   /* Route for create Game */
   router.get( '/createGame', ( request, response ) => {
@@ -43,11 +44,11 @@ module.exports = function(db, io) {
 
   /* Route for game room */
   router.get('/:gameId', (req, resp) => {
-
     gameId = req.params.gameId
     playerId = req.session.player_id
-    resp.render('game_rajat', { username: req.session.username, playerId: req.session.player_id, gameId: gameId})
-
+    username = req.session.user;
+    
+    resp.render('game_rajat', { USERNAME:username, name:req.session.user, playerId: req.session.player_id, gameId: gameId})
   })
 
   const generateRandomGameId = () => {
@@ -63,17 +64,16 @@ module.exports = function(db, io) {
 
   }
 
-
-
-
   /* Socket Operations */
   const game_io = io.of('/game')
   game_io.on('connection', function(socket) {
+    console.log("A user connected to /game namespace");
 
     socket.emit(WELCOME, {playerId: playerId})
 
     const newPlayerJoined = (data) => {
       socket.join(data.gameId.toString())
+      game_io.to(data.gameId.toString()).emit("user_entered_chat", "User " + username + " has entered the room...");
 
       let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
 
@@ -122,33 +122,33 @@ module.exports = function(db, io) {
     }
 
     const updateGame = (json) => {
-
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
-
     }
 
       /*New player joined /game */
       socket.on(PLAYER_JOINED, newPlayerJoined)
       socket.on(UPDATE_CLIENT, updateGame)
 
-      socket.on('disconnect', () => {
-        console.log("user disconnected from /game namespace");
-        if(typeof gameId != 'undefined') {
-          database.updateAvailableGames(gameId)
-          .then (() => {
-            broadcastGameList()
-          })
-        }
+    socket.on('disconnect', () => {
+      console.log("user disconnected from /game namespace");
+      game_io.to(gameId).emit("user_left_chat", "User " + name + " has left the room...");
 
-      });
+      if(typeof gameId != 'undefined') {
+        database.updateAvailableGames(gameId)
+        .then (() => {
+          broadcastGameList()
+        })
+      }
 
-      socket.on('chat_sent', function(message){
-        username = message.substr(0, message.indexOf(' '));
-        message = message.substr(message.indexOf(' ')+1);
+    });
 
-        game_io.to(gameId).emit('chat_received', username + ": " + message);
-      });
-
+    socket.on('chat_sent', function(message) {
+      username = message.substr(0, message.indexOf(' '));
+      msg = message.substr(message.indexOf(' ')+1);
+        
+      console.log("CHAT:" + message)
+      game_io.to(gameId).emit('chat_received', username + ": " + msg);
+    });
 });
 
       /*

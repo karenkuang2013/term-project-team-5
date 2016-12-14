@@ -1,4 +1,3 @@
-//var chat = require('chat');
 var socket = io('/lobby');
 initChat(socket);
 
@@ -34,8 +33,8 @@ function initBindEvents() {
 
 function listenSocketEvents() {
   socket.on('update game list', updateGameList);
-  socket.on('user_entered_lobby', sendChatUserMessage);
-  socket.on('user_left_lobby', sendChatUserMessage);
+  /* socket.on('user_entered_lobby', sendChatUserMessage);
+  socket.on('user_left_lobby', sendChatUserMessage); */
 };
 
 function createNewGame() {
@@ -62,6 +61,7 @@ function updateGameList(gameIds) {
   $gameList.html(html);
 }
 
+/*
 function sendChatUserMessage(message) {
   var liNode, liText, ulMessages, chat_box;
 
@@ -77,3 +77,4 @@ function sendChatUserMessage(message) {
     
   chat_box.scrollTop = chat_box.scrollHeight; //scrolls chat down
 }
+*/
