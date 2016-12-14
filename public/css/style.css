@@ -1,0 +1,486 @@
+/* HTML tags */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+a {
+  color: #fff;
+}
+
+/* CUSTOM */
+
+#availableGames  {
+  margin-right: 15px;
+  margin-left: 15px;
+  color: black;
+  border: 2px solid #ff8c00;
+  background-color: white;
+  border-radius: 2px;
+  height: 100%;
+}
+
+#gamesListContainer {
+  margin-right: 15px;
+  margin-left: 15px;
+  color: black;
+  border: 2px solid #ff8c00;
+  background-color: white;
+  border-radius: 5px;
+  height: 250px;
+}
+
+#chat-container {
+  width: 100%;
+  height: 250px;
+  color: black;
+}
+
+#chat-box {
+  width: 100%;
+  height: 100%;
+  margin-right: 15px;
+  margin-left: 15px;
+  border: 2px solid #ff8c00;
+  background-color: white;
+  border-radius: 15px;
+  overflow-y: scroll;
+  position: relative;
+  text-align: left;
+}
+
+#chat{
+    overflow-y: scroll;
+}
+
+#messages li:nth-child(odd) {
+  background: #fffacd;
+}
+
+#send-button, #chat-input {
+  margin-top: 10px;
+}
+
+/* HELPER CLASSES */
+
+.bottom-buffer {
+  margin-bottom: 25px;
+}
+
+.background-login-form {
+  background-color: rgba(52,73,94,0.7);
+  border-radius: 4px;
+}
+
+.background-green {
+  height: 100%;
+  background-image: url("../img/bg.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+}
+
+#card1{
+    background: url(../img/playcard.png) 0 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card2{
+    background: url(../img/playcard.png) -69px 0;
+    display:inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card3{
+    background: url(../img/playcard.png) -138px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card4{
+    background: url(../img/playcard.png) -207px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card5{
+    background: url(../img/playcard.png) -276px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card6{
+    background: url(../img/playcard.png) -345px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card7{
+    background: url(../img/playcard.png) -414px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card8{
+    background: url(../img/playcard.png) -483px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card9{
+    background: url(../img/playcard.png) -552px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card10{
+    background: url(../img/playcard.png) -621px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card11{
+    background: url(../img/playcard.png) -690px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card12{
+    background: url(../img/playcard.png) -759px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card13{
+    background: url(../img/playcard.png) -828px 0;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card14{
+    background: url(../img/playcard.png) 0px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card15{
+    background: url(../img/playcard.png) -69px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card16{
+    background: url(../img/playcard.png) -138px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card17{
+    background: url(../img/playcard.png) -207px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card18{
+    background: url(../img/playcard.png) -276px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card19{
+    background: url(../img/playcard.png) -345px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card20{
+    background: url(../img/playcard.png) -414px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card21{
+    background: url(../img/playcard.png) -483px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card22{
+    background: url(../img/playcard.png) -552px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card23{
+    background: url(../img/playcard.png) -621px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card24{
+    background: url(../img/playcard.png) -690px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card25{
+    background: url(../img/playcard.png) -759px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card26{
+    background: url(../img/playcard.png) -828px -100px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card27{
+    background: url(../img/playcard.png) 0px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card28{
+    background: url(../img/playcard.png) -69px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card29{
+    background: url(../img/playcard.png) -138px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card30{
+    background: url(../img/playcard.png) -207px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card31{
+    background: url(../img/playcard.png) -276px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card32{
+    background: url(../img/playcard.png) -345px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card33{
+    background: url(../img/playcard.png) -414px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card34{
+    background: url(../img/playcard.png) -483px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card35{
+    background: url(../img/playcard.png) -552px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card36{
+    background: url(../img/playcard.png) -621px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card37{
+    background: url(../img/playcard.png) -690px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card38{
+    background: url(../img/playcard.png) -759px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card39{
+    background: url(../img/playcard.png) -828px -200px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card40{
+    background: url(../img/playcard.png) 0px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card41{
+    background: url(../img/playcard.png) -69px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card42{
+    background: url(../img/playcard.png) -138px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card43{
+    background: url(../img/playcard.png) -207px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card44{
+    background: url(../img/playcard.png) -276px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card45{
+    background: url(../img/playcard.png) -345px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card46{
+    background: url(../img/playcard.png) -414px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card47{
+    background: url(../img/playcard.png) -483px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card48{
+    background: url(../img/playcard.png) -552px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card49{
+    background: url(../img/playcard.png) -621px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card50{
+    background: url(../img/playcard.png) -690px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card51{
+    background: url(../img/playcard.png) -759px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card52{
+    background: url(../img/playcard.png) -828px -300px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#card53{
+    background: url(../img/playcard.png) 0px -400px;
+    display: inline-block;
+    width: 69px;
+    height: 100px;
+}
+
+#body {
+    font: 20px Montserrat, sans-serif;
+    line-height: 1;
+    color: #f5f6f7;
+}
+
+p {font-size: 16px;}
+
+#margin {
+    margin-bottom: 450px;
+}
+
+#game_space {
+    background-color: #1abc9c; /* Green */
+    color: #ffffff;
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+
+#nav {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+#menu{
+  color: #1abc9c !important;
+}

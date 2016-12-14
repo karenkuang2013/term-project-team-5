@@ -1,0 +1,9 @@
+.row#chat-container
+  .col-md-12#chat-box
+    ul#messages.list-unstyled
+.row
+  .col-md-12
+    form#chat-form.form-inline(method='post')
+      input#chat-input.submit_on_enter.form-control(type='text', name='chat-text', autocomplete='off', style='width:80%')
+      button#send-button.btn.btn-primary.form-control(type='button', onclick='sendMessage()', value='Send' style='width:20%') Send
+input(style="visibility: hidden", id="target", value=USERNAME)
