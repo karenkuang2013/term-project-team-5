@@ -84,20 +84,22 @@ let database = function (db) {
       {
           // delete current rows related to given gameid and playerid
       }
+      
       let gameid = json.gameId.toString()
       let players = Object.keys(json.playerHands)
+      
       players.forEach((p) => {
-      let playerId = p.toString()
-      json.playerHands[p].forEach((value) => {
+        let playerId = p.toString()
+        json.playerHands[p].forEach((value) => {
           let cardid = value
           db.none("INSERT INTO gameplayercards VALUES($1, $2, $3, $4)",   [gameid, cardid, playerId, false])
-           .then (() => {
+          .then (() => {
             console.log('Initial state added ' + gameid);
-            })
-           .catch(function(err) {
+          })
+          .catch(function(err) {
             console.log(err)
-            })
-      })
+          })
+        })
       })
       
   }

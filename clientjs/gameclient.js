@@ -10,6 +10,7 @@ var game = {
 }
 
 var gameJSON
+var meldOff = true;
 
 const intializeSocket = () => {
   socket.on( WAIT, displayWait )
@@ -34,7 +35,7 @@ $(document).ready(function() {
 
   socket.on(STARTGAME, (json) => {
     gameJSON = json
-    console.log(json);
+    console.log("Game JSON: " + json);
     updateGame(json);
   })
 
@@ -50,10 +51,38 @@ $(document).ready(function() {
 
 
 const bindEvents = () => {
-  $('#Deck a').on('click', transferCard)
+  $('#Deck a').on('click', takeDeckCard)
+  $('#meldToggle').on('click', toggleMeld)
+  
+  if(meldOff) {
+    $('#PlayerHand div').on('click', discardCard)
+  }
+  else {
+    $('#PlayerHand div').on('click', pickMeldCards)
+  }
 }
 
-const transferCard = (e) => {
+const discardCard = () => {
+  console.log("Discarding a card");
+}
+
+const pickMeldCards = () => {
+  console.log("Picking meld cards");
+}
+
+const toggleMeld = () => {
+  meldOff ? meldOff = false : meldOff = true;
+  
+  if(meldOff) {
+    $('#meldToggle').html("Start Meld");
+  }
+  else {
+    $('#meldToggle').html("Stop Meld");
+  }
+    
+}
+
+const takeDeckCard = (e) => {
   var card = $(e.target).attr('cardvalue');
   console.log('player '+game.playerId+' clicked '+card);
 

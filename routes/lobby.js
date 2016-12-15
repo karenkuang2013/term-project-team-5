@@ -47,7 +47,7 @@ module.exports = function(db, io) {
     lobby_io.emit("user_entered_chat", "User " + username + " has entered the room...");
     
     socket.on('chat_sent', function(message) {
-     user = message.substr(0,message.indexOf(' '));
+     //not needed //user = message.substr(0,message.indexOf(' '));
      msg = message.substr(message.indexOf(' ')+1);
 
       lobby_io.emit('chat_received', username + ": " + msg);
