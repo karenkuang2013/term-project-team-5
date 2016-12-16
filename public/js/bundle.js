@@ -73,6 +73,12 @@ const bindEvents = () => {
 }
 
 const toggleMeld = () => {
+  //unbind cards event handler so that the previously attached event handler
+  //will not execute before meld state is changed and new event handler
+  //is attached by bindEvents()
+  $('#PlayerHand div').removeClass('bound');
+  $('#PlayerHand div').off();
+  
   if($('#meldToggle').attr('value') == 'meld_off') {
     console.log("Turning meld on")
     $('#meldToggle').attr('value', 'meld_on');
@@ -108,7 +114,7 @@ const discardCard = (event) => {
   var card = $(event.target).attr('cardvalue');
   console.log("TYPE OF:" + typeof card);
   
-  
+  //possible bug because card is a string
   if(card >=1 && card <= 52) {
     var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card)); 
     console.log('Index of card to remove: ' + indexOfCardToRemove);
@@ -120,7 +126,9 @@ const discardCard = (event) => {
   //remove from player's hand
   gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
   //add to deck
+  console.log("DISCARD PILE BEFORE:" + gameJSON.discard_pile.toString());
   gameJSON.discard_pile.push(card);
+  console.log("DISCARD PILE AFTER:" + gameJSON.discard_pile.toString());
   
   emitUpdate();
   bindEvents();
@@ -129,6 +137,7 @@ const discardCard = (event) => {
 //not working. make sure toggleMeld is working
 const pickMeldCards = () => {
   console.log("Picking meld cards");
+  bindEvents();
 }
 
 const emitUpdate = () => {
