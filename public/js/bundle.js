@@ -11,7 +11,6 @@ var game = {
 }
 
 var gameJSON
-var meldOff = true;
 
 const intializeSocket = () => {
   socket.on( WAIT, displayWait )
@@ -19,9 +18,11 @@ const intializeSocket = () => {
 
 const displayWait = (data) => {
  $('#gameArea').hide();
+ 
  var form = document.getElementById("waitingArea");
  var alertDiv = document.createElement("DIV");
  var alertText = document.createTextNode("Welcome !\n Waiting for other player to join.");
+ 
  alertDiv.classList.add("alert","alert-danger", "text-center");
  alertDiv.setAttribute("role", "alert");
  alertDiv.appendChild(alertText);
@@ -30,9 +31,9 @@ const displayWait = (data) => {
 
 
 $(document).ready(function() {
-
-  addLogout()
+  addLogout()  
   bindEvents()
+  intializeSocket()
 
   socket.emit( PLAYER_JOINED, {gameId: game.gameId} )
 
@@ -40,7 +41,7 @@ $(document).ready(function() {
     game.playerId = data.playerId;
   })
   
-  intializeSocket()
+  //intializeSocket()
   
   socket.on(STARTGAME, (json) => {
     gameJSON = json
@@ -58,55 +59,76 @@ $(document).ready(function() {
 
 })
 
-
 const bindEvents = () => {
-  $('#Deck a').on('click', takeDeckCard)
-  $('#meldToggle').on('click', toggleMeld)
+  $('#Deck a:not(.bound)').addClass('bound').on('click', takeDeckCard);
   
-  if(meldOff) {
-    $('#PlayerHand div').on('click', discardCard)
+  $('#meldToggle:not(.bound)').addClass('bound').on('click', toggleMeld);
+  
+  if($('#meldToggle').attr('value') == 'meld_off') {
+    $('#PlayerHand div:not(.bound)').addClass('bound').on('click', discardCard);
   }
-  else {
-    $('#PlayerHand div').on('click', pickMeldCards)
+  else if($('#meldToggle').attr('value') == 'meld_on') {
+    $('#PlayerHand div:not(.bound)').addClass('bound').on('click', pickMeldCards);
   }
-}
-
-<<<<<<< HEAD
-const discardCard = () => {
-  console.log("Discarding a card");
-}
-
-const pickMeldCards = () => {
-  console.log("Picking meld cards");
 }
 
 const toggleMeld = () => {
-  meldOff ? meldOff = false : meldOff = true;
+  if($('#meldToggle').attr('value') == 'meld_off') {
+    console.log("Turning meld on")
+    $('#meldToggle').attr('value', 'meld_on');
+    $('#meldToggle').html('Stop Meld');
+  }
+  else if($('#meldToggle').attr('value') == 'meld_on') {
+    console.log("Turning meld off")
+    $('#meldToggle').attr('value', 'meld_off');
+    $('#meldToggle').html('Start Meld');
+  }
   
-  if(meldOff) {
-    $('#meldToggle').html("Start Meld");
-  }
-  else {
-    $('#meldToggle').html("Stop Meld");
-  }
-    
+  bindEvents();  
 }
 
-const takeDeckCard = (e) => {
-=======
-const transferCard = (e) => {
+const takeDeckCard = (event) => {
   if ($('#Deck').hasClass('disabled')) return;
   
->>>>>>> dev
-  var card = $(e.target).attr('cardvalue');
-  console.log('player '+game.playerId+' clicked '+card);
+  var card = $(event.target).attr('cardvalue');
+  console.log('player ' + game.playerId + ' clicked ' + card);
 
   var cardId = gameJSON.deck.pop()
-  gameJSON.playerHands[game.playerId].push(cardId)
+    console.log('player ' + game.playerId + ' clicked cardID ' + card);
 
+  gameJSON.playerHands[game.playerId].push(cardId)
 
   emitUpdate();
   bindEvents();
+}
+
+
+const discardCard = (event) => {
+  console.log("Discarding a card");
+  var card = $(event.target).attr('cardvalue');
+  console.log("TYPE OF:" + typeof card);
+  
+  
+  if(card >=1 && card <= 52) {
+    var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card)); 
+    console.log('Index of card to remove: ' + indexOfCardToRemove);
+    console.log("ARRAY TO STRING:" + gameJSON.playerHands[game.playerId].toString());
+  }
+
+  console.log('player ' + game.playerId + ' clicked ' + card);
+
+  //remove from player's hand
+  gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
+  //add to deck
+  gameJSON.discard_pile.push(card);
+  
+  emitUpdate();
+  bindEvents();
+}
+
+//not working. make sure toggleMeld is working
+const pickMeldCards = () => {
+  console.log("Picking meld cards");
 }
 
 const emitUpdate = () => {
@@ -114,7 +136,6 @@ const emitUpdate = () => {
 }
 
 const updateGame = (json) => {
-
   $('#gameArea').show();
   $('#waitingArea').hide();
   gameJSON = json
@@ -148,8 +169,8 @@ const updateGame = (json) => {
  
   checkTurn(json.turn.toString());
   bindEvents();
-
 }
+
 const checkTurn = (turn) => {
     var messageBar = document.getElementById("Message");
     var messageText = '';
