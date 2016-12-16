@@ -135,10 +135,37 @@ const discardCard = (event) => {
 }
 
 //not working. make sure toggleMeld is working
-const pickMeldCards = () => {
+const pickMeldCards = (event) => {
   console.log("Picking meld cards");
+  
+  var card = $(event.target).attr('cardvalue');
+  console.log("TYPE OF:" + typeof card);
+  
+  $('#tempmeld').append("<div id='card"+card+"' cardvalue="+card+" />")
+  
+  var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card)); 
+  gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
+
+  emitUpdate();
   bindEvents();
+  /*var meldObj = {
+          playerId : game.playerId,
+          cards_melded : meldSet
+          }
+  */
+  
+  /*var meldJSON = {
+        [melds] = {
+          player : game.playerId,
+          cards_melded : [1, 2, 3]
+          }
+  }*/
+  
 }
+  
+  const stopMeldingCards = () => {
+    
+  }
 
 const emitUpdate = () => {
   socket.emit(UPDATE_CLIENT, gameJSON)
