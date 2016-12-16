@@ -18,7 +18,14 @@ const intializeSocket = () => {
 }
 
 const displayWait = (data) => {
-  // $('#gameArea').hide()
+ $('#gameArea').hide();
+ var form = document.getElementById("waitingArea");
+ var alertDiv = document.createElement("DIV");
+ var alertText = document.createTextNode("Welcome !\n Waiting for other player to join.");
+ alertDiv.classList.add("alert","alert-danger", "text-center");
+ alertDiv.setAttribute("role", "alert");
+ alertDiv.appendChild(alertText);
+ form.appendChild(alertDiv);
 }
 
 
@@ -26,14 +33,15 @@ $(document).ready(function() {
 
   addLogout()
   bindEvents()
-  intializeSocket()
 
   socket.emit( PLAYER_JOINED, {gameId: game.gameId} )
 
   socket.on( WELCOME, (data) => {
     game.playerId = data.playerId;
   })
-
+  
+  intializeSocket()
+  
   socket.on(STARTGAME, (json) => {
     gameJSON = json
     console.log("Game JSON: " + json);
@@ -63,6 +71,7 @@ const bindEvents = () => {
   }
 }
 
+<<<<<<< HEAD
 const discardCard = () => {
   console.log("Discarding a card");
 }
@@ -84,15 +93,17 @@ const toggleMeld = () => {
 }
 
 const takeDeckCard = (e) => {
+=======
+const transferCard = (e) => {
+  if ($('#Deck').hasClass('disabled')) return;
+  
+>>>>>>> dev
   var card = $(e.target).attr('cardvalue');
   console.log('player '+game.playerId+' clicked '+card);
 
   var cardId = gameJSON.deck.pop()
   gameJSON.playerHands[game.playerId].push(cardId)
-  // var newPlayerCard = "<div id='card"+cardId+"' cardvalue="+cardId+" />"
-  // $('#PlayerHand').append(newPlayerCard)
-  // var newCardDeck = "<a><div id='card53' cardvalue="+gameJSON.deck[gameJSON.deck.length-1]+" /></a>";
-  // $('#Deck').html(newCardDeck)
+
 
   emitUpdate();
   bindEvents();
@@ -104,6 +115,8 @@ const emitUpdate = () => {
 
 const updateGame = (json) => {
 
+  $('#gameArea').show();
+  $('#waitingArea').hide();
   gameJSON = json
   var playerHand = ""
   var opponentHand = ""
@@ -124,7 +137,7 @@ const updateGame = (json) => {
       $('#OpponentHand').html(opponentHand)
     }
   })
-
+   
   var deck = ""
   deck = "<a><div id='card53' cardvalue="+json.deck[json.deck.length-1]+" /></a>";
   $('#Deck').html(deck)
@@ -132,9 +145,28 @@ const updateGame = (json) => {
   var discardPile = ""
   discardPile = "<a><div id='card"+json.discard_pile[0]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
-
+ 
+  checkTurn(json.turn.toString());
   bindEvents();
 
+}
+const checkTurn = (turn) => {
+    var messageBar = document.getElementById("Message");
+    var messageText = '';
+
+    if(turn != game.playerId)
+    {
+        $('#Deck').addClass('disabled');
+        messageText = "Opponent's turn";
+    }
+    else{
+        
+        $('#Deck').addClass('enabled');
+        messageText = "Your Turn";
+    }
+    messageBar.innerHTML = messageText;
+   
+     
 }
 
 function addLogout() {
