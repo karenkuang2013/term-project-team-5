@@ -492,3 +492,7 @@ p {font-size: 16px;}
 #menu{
   color: #1abc9c !important;
 }
+
+a.disabled{ 
+   color:gray; 
+   }
