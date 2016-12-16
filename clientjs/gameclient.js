@@ -66,6 +66,7 @@ const discardCard = () => {
   console.log("Discarding a card");
 }
 
+//not owrking. make sure toggleMeld is working
 const pickMeldCards = () => {
   console.log("Picking meld cards");
 }
