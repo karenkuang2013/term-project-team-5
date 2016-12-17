@@ -169,7 +169,7 @@ const stopMeldingCards = () => {
   tempMeldCards = tempMeldCards.sort();
   
   if(isLegalMeld(tempMeldCards)) {
-    gameJASON.melds.push(tempMeldCards);
+    gameJSON.melds.push(tempMeldCards);
   }
   
   socket.emit(CARDS_MELDED, gameJSON);
@@ -191,7 +191,9 @@ function isLegalMeld(tempMeldCards) {
   var length = sortedMeldCards.length;
   
   //check if in range
-  if(length > 1) {
+   if(length > 1 &&
+      (sortedMeldCards[length-1]%13 != sortedMeldCards[0]%13)) //checks that it is not legal same suit meld
+  {
     if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
       //error not in range
       console.log("Checking Legal Meld: NOT IN RANGE");
@@ -201,7 +203,9 @@ function isLegalMeld(tempMeldCards) {
   
   for(let i = 0; i<length-1; i++) {
     if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
-      return false;
+      if(!isSameSuit(sortedMeldCards[i], sortedMeldCards[i+1])) {
+        return false;
+      }
     }
   }
   
@@ -217,7 +221,11 @@ function isInOrder(card1, card2) {
 }
 
 function isSameSuit(card1, card2) {
+  if((card1 % 13) == (card2 % 13)) {
+    return true;
+  }
   
+  return false;
 }
 
 function checkLegalLayoff() {
