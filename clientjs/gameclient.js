@@ -127,16 +127,20 @@ const takeDeckCard = (event) => {
   bindEvents();
 }
 
-const success = (json) => {    
-     $('#Deck').removeClass('enabled').addClass('disabled');
-     $('#DiscardPile').removeClass('enabled').addClass('disabled');
-     $('#PlayerHand').removeClass('disabled').addClass('enabled');
-     $('#meldToggle').prop( "disabled", false );
-     $('#cancel').prop( "disabled", false );   
+const success = (json) => {
+  var turn = json.turn.toString();
+  if(turn.localeCompare(game.playerId)!=0)
+  {
+    $('#Deck').removeClass('enabled').addClass('disabled');
+    $('#DiscardPile').removeClass('enabled').addClass('disabled');
+    $('#PlayerHand').removeClass('disabled').addClass('enabled');
+    $('#meldToggle').prop( "disabled", false );
+    $('#cancel').prop( "disabled", false );
+  }
 }
 
 const discardCard = (event) => {
-  
+
   if ($('#PlayerHand').hasClass('disabled')) return;
   console.log("Discarding a card");
   var card = $(event.target).attr('cardvalue');
