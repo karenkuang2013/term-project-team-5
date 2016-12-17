@@ -44,7 +44,6 @@ module.exports = function(db, io) {
 
     console.log(username + " connected to /lobby namespace");
 
-    broadcastGameList(socket);
     lobby_io.emit("user_entered_chat", "User " + username + " has entered the room...");
 
     socket.on('chat_sent', function(message) {
