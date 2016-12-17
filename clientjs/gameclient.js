@@ -19,11 +19,11 @@ const intializeSocket = () => {
 
 const displayWait = (data) => {
  $('#gameArea').hide();
- 
+
  var form = document.getElementById("waitingArea");
  var alertDiv = document.createElement("DIV");
  var alertText = document.createTextNode("Welcome !\n Waiting for other player to join.");
- 
+
  alertDiv.classList.add("alert","alert-danger", "text-center");
  alertDiv.setAttribute("role", "alert");
  alertDiv.appendChild(alertText);
@@ -32,7 +32,7 @@ const displayWait = (data) => {
 
 
 $(document).ready(function() {
-  addLogout()  
+  addLogout()
   bindEvents()
   intializeSocket()
 
@@ -41,9 +41,9 @@ $(document).ready(function() {
   socket.on( WELCOME, (data) => {
     game.playerId = data.playerId;
   })
-  
+
   //intializeSocket()
-  
+
   socket.on(STARTGAME, (json) => {
     gameJSON = json
     console.log("Game JSON: " + json);
@@ -52,19 +52,14 @@ $(document).ready(function() {
 
   socket.on(UPDATE_SERVER, updateGame)
 
-  // socket.on(TRANSFER_TO_HAND, (data) => {
-  //
-  //   updateGame(data);
-  //
-  // })
 
 })
 
 const bindEvents = () => {
   $('#Deck a:not(.bound)').addClass('bound').on('click', takeDeckCard);
-  
+
   $('#meldToggle:not(.bound)').addClass('bound').on('click', toggleMeld);
-  
+
   if($('#meldToggle').attr('value') == 'meld_off') {
     $('#PlayerHand div:not(.bound)').addClass('bound').on('click', discardCard);
   }
@@ -93,13 +88,13 @@ const toggleMeld = () => {
     //call stop meld
     stopMeldingCards();
   }
-  
-  bindEvents();  
+
+  bindEvents();
 }
 
 const takeDeckCard = (event) => {
   if ($('#Deck').hasClass('disabled')) return;
-  
+
   var card = $(event.target).attr('cardvalue');
   console.log('player ' + game.playerId + ' clicked ' + card);
 
@@ -119,8 +114,8 @@ const discardCard = (event) => {
   console.log("TYPE OF:" + typeof card);
   
   //possible bug because card is a string
-  if(card >=1 && card <= 52) {
-    var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card)); 
+ if(card >=1 && card <= 52) {
+    var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card));
     console.log('Index of card to remove: ' + indexOfCardToRemove);
     console.log("ARRAY TO STRING:" + gameJSON.playerHands[game.playerId].toString());
   }
@@ -255,7 +250,7 @@ const updateGame = (json) => {
       $('#OpponentHand').html(opponentHand)
     }
   })
-   
+
   var deck = ""
   deck = "<a><div id='card53' cardvalue="+json.deck[json.deck.length-1]+" /></a>";
   $('#Deck').html(deck)
@@ -263,7 +258,7 @@ const updateGame = (json) => {
   var discardPile = ""
   discardPile = "<a><div id='card"+json.discard_pile[0]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
- 
+
   checkTurn(json.turn.toString());
   bindEvents();
 }
@@ -278,13 +273,13 @@ const checkTurn = (turn) => {
         messageText = "Opponent's turn";
     }
     else{
-        
+
         $('#Deck').addClass('enabled');
         messageText = "Your Turn";
     }
     messageBar.innerHTML = messageText;
-   
-     
+
+
 }
 
 function addLogout() {

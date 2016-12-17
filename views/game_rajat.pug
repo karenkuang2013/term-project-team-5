@@ -12,12 +12,16 @@ block content
     #game_space.col-md-9.container-fluid.bg-1.text-center
    
       #OpponentHand
-    
+      .col-md-12
+      .col-md-5
+      #Deck.col-md-1
+      #DiscardPile.col-md-6
+   
       #Deck
-      
-      #DiscardPile
 
       button#meldToggle.btn.btn-warning.btn-sm(type='button', value='meld_off') Start Meld
+      #divider
+      button#cancel.btn.btn-warning.btn-sm(type='button') Cancel
       br
       br
       #Message
@@ -32,3 +36,4 @@ block content
       #meld_area.row
         p Melded Cards
   #waitingArea
+

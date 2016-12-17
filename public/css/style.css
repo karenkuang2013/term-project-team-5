@@ -62,6 +62,15 @@ a {
 }
 
 /* HELPER CLASSES */
+#nav {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 18px;
+    letter-spacing: 2px;
+}
 
 .bottom-buffer {
   margin-bottom: 25px;
@@ -73,11 +82,48 @@ a {
 }
 
 .background-green {
-  height: 100%;
-  background-image: url("../img/bg.jpg");
-  background-repeat: no-repeat;
-  background-size: 100% auto;
+    background-color: #1abc9c; /* Green */
+    padding-bottom: 140px;
 }
+
+#game_space {
+    background-color: #1abc9c; /* Green */
+    color: #ffffff;
+    text-align: center;
+    padding-top: 80px;
+    padding-bottom: 120px;
+}
+
+#waitingArea
+{
+    background-color: #1abc9c; /* Green */
+    color: #ffffff;
+    text-align: center;
+    padding-top: 15%;
+    padding-bottom: 25%;
+}
+
+#OpponentHand{
+    padding-bottom: 30px
+}
+
+#Deck{
+    padding-bottom: 30px;
+    text-align: left;
+}
+
+#DiscardPile{
+    padding-bottom: 30px;
+    text-align: left;
+}
+
+#divider{
+    width:6px;
+    heigth:auto;
+    display: inline-block;
+}
+
+
 
 #card1{
     background: url(../img/playcard.png) 0 0;
@@ -462,32 +508,7 @@ p {font-size: 16px;}
     margin-bottom: 450px;
 }
 
-#game_space {
-    background-color: #1abc9c; /* Green */
-    color: #ffffff;
-    text-align: center;
-    padding-top: 5px;
-    padding-bottom: 15px;
-}
 
-#waitingArea
-{
-     background-color: #1abc9c; /* Green */
-    color: #ffffff;
-    text-align: center;
-    padding-top: 15%;
-    padding-bottom: 25%;
-}
-
-#nav {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border: 0;
-    border-radius: 0;
-    margin-bottom: 0;
-    font-size: 16px;
-    letter-spacing: 2px;
-}
 
 #menu{
   color: #1abc9c !important;

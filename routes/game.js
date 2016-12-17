@@ -11,9 +11,6 @@ module.exports = function(db, io) {
   const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED }
     = require('../constants/events')
 
-  const gameServer = require('./gameserver')
-  gameServer.init(db, io)
-  
   const MAX_PLAYERS = 2;
 
   let playerId;
@@ -34,28 +31,28 @@ module.exports = function(db, io) {
       })
     })
   })
-  
+
   /* Route for game room */
   router.get('/:gameId', (req, resp) => {
     gameId = req.params.gameId
     session = req.session;
     playerId = session.player_id
     username = session.user;
-    
+
     //todo: remove the unnecessary arguments
     resp.render('game_rajat', { USERNAME:username, name:req.session.user, playerId: req.session.player_id, gameId: gameId})
   })
 
   /* Route for join Game */
   router.get('/joinGame/:gameId', (req, resp) => {
-    
+
     //note: gameId is global because of no var/let/anything keyword
     //gameId = req.params.gameId
     database.createGamePlayer(req.params.gameId, req.session.player_id)
     resp.redirect('/game/' + gameId)
 
   })
-  
+
   /* Helper Functions */
 
   const generateRandomGameId = () => {
@@ -90,8 +87,10 @@ module.exports = function(db, io) {
         .then ((gameJSON) => {
           game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
         })
-
-        broadcastGameList()
+        database.updateAvailableGames(gameId)
+        .then (() => {
+          broadcastGameList()
+        })
       }
       else {
         game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )
@@ -102,7 +101,7 @@ module.exports = function(db, io) {
 
       return database.getGamePlayer(gameId)
       .then((players) => {
-        
+
         console.log("Players: " + players[0] + " " + players[1]);
 
         cards = [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,
@@ -127,9 +126,9 @@ module.exports = function(db, io) {
           
           melds : [] 
         }
-        
-        database.addGameStateToDb(json, true)
-        
+
+        database.addGameStateToDb(json)
+
         return json
       });
     }
@@ -137,7 +136,20 @@ module.exports = function(db, io) {
     
 
     const updateGame = (json) => {
+      database.addGameStateToDb(json);
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
+    }
+
+    const switchPlayers = (json) => {
+      let players = Object.keys(json.playerHands)
+
+      if(players[0].localeCompare(json.turn)==0){
+        json.turn = players[1]
+      }
+      else {
+        json.turn = players[0]
+      }
+      return json
     }
     /* End Game Functions */
 
@@ -162,7 +174,7 @@ module.exports = function(db, io) {
     socket.on('chat_sent', function(message) {
       user = message.substr(0, message.indexOf(' '));
       msg = message.substr(message.indexOf(' ')+1);
-        
+
       console.log("CHAT:" + message)
       if(typeof gameId != 'undefined') {
         game_io.to(gameId).emit('chat_received', user + ": " + msg);
@@ -170,17 +182,6 @@ module.exports = function(db, io) {
     });
 });
 
-      /*
-      socket.on(WITHDRAW_CARD, (data) => {
-      console.log('player '+data.game.playerId+' clicked '+data.cardId)
-
-      gameJSON.player.push(data.cardId)
-      gameJSON.deck.pop()
-      // console.log(gameJSON);
-      socket.emit(TRANSFER_TO_HAND, gameJSON)
-    })
-
-*/
 
 return router
 }
