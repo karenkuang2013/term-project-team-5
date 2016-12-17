@@ -71,6 +71,7 @@ module.exports = function(db, io) {
   function isLegalMeld(tempMeldCards) {
     var sortedMeldCards = tempMeldCards.sort();
     var length = sortedMeldCards.length;
+    var isLegal = true;
 
     //check if in range
      if(length > 1 &&
@@ -83,29 +84,54 @@ module.exports = function(db, io) {
       }
     }
 
+    //if length is greater than 2 then do these two checks, else check layoff
+    //check if in order: 1s,2s,3s,4s..etc
     for(let i = 0; i<length-1; i++) {
-      if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
-        if(!isSameRank(sortedMeldCards[i], sortedMeldCards[i+1])) {
-          //bug: 1 spade, 2 heart, 
-          return false;
-        }
+      if(!isInOrderAndSameSuit(sortedMeldCards[i], sortedMeldCards[i+1])) {
+        console.log("NOT IN ORDER");
+        isLegal = false;
+      }
+    }
+    
+    //check if same rank: 1s,1h,1d,1c..etc
+    isLegal = true;
+    for(let j = 0; j<length-1; j++) {
+      if(!isSameRank(sortedMeldCards[j], sortedMeldCards[j+1])) {
+        console.log("NOT SAME RANK");
+        isLegal = false;
       }
     }
 
     console.log("Checking Legal Meld: IS LEGAL");
-    return true;
+    return isLegal;
   }
 
-  function isInOrder(card1, card2) {
-    if((card1 == card2+1) || (card1 == card2-1)) {
-      return true;
+  function isInOrderAndSameSuit(card1, card2) {
+    if(isSameSuit(card1, card2)) {
+      if((card1 == card2+1) || (card1 == card2-1)) {
+        return true;
+      }
     }
 
     return false;
   }
 
   function isSameRank(card1, card2) {
-    if((card1 % 13) == (card2 % 13)) {
+    if((card1 % NUM_CARDS_IN_SUIT) == (card2 % NUM_CARDS_IN_SUIT)) {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  function isSameSuit(card1, card2) {
+    //check same suit
+    if((card1/NUM_CARDS_IN_SUIT) == (card2/NUM_CARDS_IN_SUIT)) {
+      //check edge case: (13, 26, 39, 52)/13 = 1, 2, 3, 4 but do not belong in that suit
+      if(card1%NUM_CARDS_IN_SUIT == 0 || card2%NUM_CARDS_IN_SUIT == 0) {
+        return false;
+      }
+      
       return true;
     }
     

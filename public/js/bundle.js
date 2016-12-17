@@ -284,20 +284,23 @@ const checkTurn = (turn) => {
 
     if(turn.localeCompare(game.playerId)==0)
     {
+      console.log("It's my turn!");
         $('#Deck').removeClass('enabled').addClass('disabled');
         $('#DiscardPile').removeClass('enabled').addClass('disabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        $('#meldToggle').prop( "disabled", true );
-        $('#cancel').prop( "disabled", true );
+        //$('#meldToggle').prop( "disabled", false );
+        //$('#cancel').prop( "disabled", true );
 
         messageText = "Opponent's turn";
     }
     else{
+            console.log("It's not my turn!");
+            
         $('#Deck').removeClass('disabled').addClass('enabled');
         $('#DiscardPile').removeClass('disabled').addClass('enabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        $('#meldToggle').prop( "disabled", true );
-        $('#cancel').prop( "disabled", true );
+        //$('#meldToggle').prop( "disabled", true );
+        //$('#cancel').prop( "disabled", true );
         messageText = "Your Turn";
     }
     messageBar.innerHTML = messageText;
