@@ -1,9 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-<<<<<<< HEAD
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT ,WITHDRAW_CARD, SUCCESS} = require('../constants/events')
-=======
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED } = require('../constants/events')
->>>>>>> 599f29c3aa409e69e287ae92bf20ee3b49845070
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD} = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -41,6 +37,7 @@ $(document).ready(function() {
   bindEvents()
   intializeSocket()
 
+
   socket.emit( PLAYER_JOINED, {gameId: game.gameId} )
 
   socket.on( WELCOME, (data) => {
@@ -56,8 +53,9 @@ $(document).ready(function() {
   })
 
   socket.on(UPDATE_SERVER, updateGame)
-  
+
   socket.on(SUCCESS, success)
+
 
 
 })
@@ -82,7 +80,7 @@ const toggleMeld = () => {
   //is attached by bindEvents()
   $('#PlayerHand div').removeClass('bound');
   $('#PlayerHand div').off();
-  
+
   if($('#meldToggle').attr('value') == 'meld_off') {
     console.log("Turning meld on")
     $('#meldToggle').attr('value', 'meld_on');
@@ -92,7 +90,7 @@ const toggleMeld = () => {
     console.log("Turning meld off")
     $('#meldToggle').attr('value', 'meld_off');
     $('#meldToggle').html('Start Meld');
-    
+
     //call stop meld
     stopMeldingCards();
   }
@@ -131,15 +129,15 @@ const takeDeckCard = (event) => {
 }
 
 const success = (json) => {
-    
-    
+
+
 }
 
 const discardCard = (event) => {
   console.log("Discarding a card");
   var card = $(event.target).attr('cardvalue');
   console.log("TYPE OF:" + typeof card);
-  
+
   //possible bug because card is a string
  if(card >=1 && card <= 52) {
     var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card));
@@ -154,23 +152,22 @@ const discardCard = (event) => {
   //add to deck
   console.log("DISCARD PILE BEFORE:" + gameJSON.discard_pile.toString());
   gameJSON.discard_pile.push(card);
-  console.log("DISCARD PILE AFTER:" + gameJSON.discard_pile.toString());
-  
-  emitUpdate();
+
+  socket.emit( DISCARD_CARD, gameJSON)
   bindEvents();
 }
 
 //not working. make sure toggleMeld is working
 const pickMeldCards = (event) => {
   console.log("Picking meld cards");
-  
+
   var card = $(event.target).attr('cardvalue');
   console.log("TYPE OF:" + typeof card);
-  
+
   $('#temp_meld').append("<div id='card"+card+"' cardvalue="+card+" />")
   tempMeldCards.push(parseInt(card));
-  
-  var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card)); 
+
+  var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card));
   gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
 
   emitUpdate();
@@ -180,42 +177,42 @@ const pickMeldCards = (event) => {
           cards_melded : meldSet
           }
   */
-  
+
   /*var meldJSON = {
         [melds] = {
           player : game.playerId,
           cards_melded : [1, 2, 3]
           }
   }*/
-  
+
 }
-  
+
 const stopMeldingCards = () => {
   console.log(tempMeldCards.toString());
   tempMeldCards = tempMeldCards.sort();
-  
+
   if(isLegalMeld(tempMeldCards)) {
     gameJASON.melds.push(tempMeldCards);
   }
-  
+
   socket.emit(CARDS_MELDED, gameJSON);
-  
-  
-  
+
+
+
 
   //var toBeMeldedCards = $('#temp_meld').
-  
+
   //checkLegalMeld() //will check if it is a meld itself, or if it can be melded into
   //already existing meld set (this will take precedence than starting a new meld)
-  
+
   //if legal, update gameJSON meld array (gameUpdate will render meld area automatically)
 }
 
 function isLegalMeld(tempMeldCards) {
   var sortedMeldCards = tempMeldCards.sort();
-  
+
   var length = sortedMeldCards.length;
-  
+
   //check if in range
   if(length > 1) {
     if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
@@ -224,13 +221,13 @@ function isLegalMeld(tempMeldCards) {
       return false;
     }
   }
-  
+
   for(let i = 0; i<length-1; i++) {
     if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -238,16 +235,16 @@ function isInOrder(card1, card2) {
   if((card1 == card2+1) || (card1 == card2-1)) {
     return true;
   }
-  
+
   return false;
 }
 
 function isSameSuit(card1, card2) {
-  
+
 }
 
 function checkLegalLayoff() {
-  
+
 }
 
 const emitUpdate = () => {
@@ -283,7 +280,7 @@ const updateGame = (json) => {
   $('#Deck').html(deck)
 
   var discardPile = ""
-  discardPile = "<a><div id='card"+json.discard_pile[0]+"' cardvalue="+json.discard_pile[0]+" /></a>";
+  discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
 
   checkTurn(json.turn.toString());
@@ -300,7 +297,7 @@ const checkTurn = (turn) => {
         $('#DiscardPile').removeClass('enabled').addClass('disabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        
+
         messageText = "Opponent's turn";
     }
     else{
@@ -337,13 +334,9 @@ const UPDATE_CLIENT = 'update request client'
 const UPDATE_SERVER = 'update request server'
 const CARDS_MELDED = 'cards melded'
 const UPDATE = 'update request'
+const DISCARD_CARD = 'card discarded'
 const SUCCESS = 'success'
 
-<<<<<<< HEAD
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, UPDATE, SUCCESS }
-=======
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE }
-
->>>>>>> 599f29c3aa409e69e287ae92bf20ee3b49845070
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD }
 
 },{}]},{},[1]);
