@@ -90,8 +90,10 @@ module.exports = function(db, io) {
         .then ((gameJSON) => {
           game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
         })
-
-        broadcastGameList()
+        database.updateAvailableGames(gameId)
+        .then (() => {
+          broadcastGameList()
+        })
       }
       else {
         game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )

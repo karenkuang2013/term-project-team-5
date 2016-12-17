@@ -39,6 +39,7 @@ module.exports = function(db, io) {
     var username;
     if(session != null) {
       username = session.user;
+      broadcastGameList(lobby_io);
     }
     
     console.log(username + " connected to /lobby namespace");
