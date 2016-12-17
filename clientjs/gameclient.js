@@ -1,4 +1,4 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, DISCARD_CARD } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -34,6 +34,7 @@ $(document).ready(function() {
   bindEvents()
   intializeSocket()
 
+
   socket.emit( PLAYER_JOINED, {gameId: game.gameId} )
 
   socket.on( WELCOME, (data) => {
@@ -51,10 +52,13 @@ $(document).ready(function() {
   socket.on(UPDATE_SERVER, updateGame)
 
 
+
 })
 
 const bindEvents = () => {
   $('#Deck a:not(.bound)').addClass('bound').on('click', takeDeckCard);
+  //Remove later. Added by rajat for testing
+  // $('#PlayerHand div').on('click', discardCard)
 
   $('#meldToggle:not(.bound)').addClass('bound').on('click', toggleMeld);
 
@@ -116,7 +120,8 @@ const discardCard = (event) => {
   //add to deck
   gameJSON.discard_pile.push(card);
 
-  emitUpdate();
+  socket.emit( DISCARD_CARD, gameJSON)
+
   bindEvents();
 }
 
@@ -158,7 +163,7 @@ const updateGame = (json) => {
   $('#Deck').html(deck)
 
   var discardPile = ""
-  discardPile = "<a><div id='card"+json.discard_pile[0]+"' cardvalue="+json.discard_pile[0]+" /></a>";
+  discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
 
   checkTurn(json.turn.toString());

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, DISCARD_CARD } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -35,6 +35,7 @@ $(document).ready(function() {
   bindEvents()
   intializeSocket()
 
+
   socket.emit( PLAYER_JOINED, {gameId: game.gameId} )
 
   socket.on( WELCOME, (data) => {
@@ -52,10 +53,13 @@ $(document).ready(function() {
   socket.on(UPDATE_SERVER, updateGame)
 
 
+
 })
 
 const bindEvents = () => {
   $('#Deck a:not(.bound)').addClass('bound').on('click', takeDeckCard);
+  //Remove later. Added by rajat for testing
+  // $('#PlayerHand div').on('click', discardCard)
 
   $('#meldToggle:not(.bound)').addClass('bound').on('click', toggleMeld);
 
@@ -117,7 +121,8 @@ const discardCard = (event) => {
   //add to deck
   gameJSON.discard_pile.push(card);
 
-  emitUpdate();
+  socket.emit( DISCARD_CARD, gameJSON)
+
   bindEvents();
 }
 
@@ -159,7 +164,7 @@ const updateGame = (json) => {
   $('#Deck').html(deck)
 
   var discardPile = ""
-  discardPile = "<a><div id='card"+json.discard_pile[0]+"' cardvalue="+json.discard_pile[0]+" /></a>";
+  discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
 
   checkTurn(json.turn.toString());
@@ -207,7 +212,8 @@ const WAIT = 'wait for other players'
 const UPDATE_CLIENT = 'update request client'
 const UPDATE_SERVER = 'update request server'
 const UPDATE = 'update request'
+const DISCARD_CARD = 'card discarded'
 
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, UPDATE }
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, UPDATE, DISCARD_CARD }
 
 },{}]},{},[1]);

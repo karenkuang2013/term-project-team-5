@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, DISCARD_CARD }
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
@@ -147,11 +147,22 @@ module.exports = function(db, io) {
       }
       return json
     }
+
+    const cardDiscarded = (json) => {
+
+      let updatedJson = switchPlayers(json)
+
+      console.log('server got discard request');
+      console.log(updatedJson);
+      updateGame(updatedJson)
+
+    }
     /* End Game Functions */
 
     /*New player joined /game */
     socket.on(PLAYER_JOINED, playerJoined)
     socket.on(UPDATE_CLIENT, updateGame)
+    socket.on(DISCARD_CARD, cardDiscarded)
 
     socket.on('disconnect', () => {
       console.log("user disconnected from /game namespace");
