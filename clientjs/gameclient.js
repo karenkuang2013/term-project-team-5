@@ -171,29 +171,21 @@ const pickMeldCards = (event) => {
 
   emitUpdate();
   bindEvents();
-  /*var meldObj = {
-          playerId : game.playerId,
-          cards_melded : meldSet
-          }
-  */
-
-  /*var meldJSON = {
-        [melds] = {
-          player : game.playerId,
-          cards_melded : [1, 2, 3]
-          }
-  }*/
-
 }
 
 const stopMeldingCards = () => {
   console.log(tempMeldCards.toString());
-  tempMeldCards = tempMeldCards.sort();
+  
+  meldJSON = gameJSON;
+  meldJSON.melds.[gameJSON.meldId] = tempMeldCards;
+  
+  socket.emit(CARDS_MELDED, gameJSON, meldJSON);
+  /* tempMeldCards = tempMeldCards.sort();
 
   if(isLegalMeld(tempMeldCards)) {
     gameJSON.melds.push(tempMeldCards);
     socket.emit(CARDS_MELDED, gameJSON);
-  }
+  } */
 
   bindEvents();
 

@@ -66,6 +66,49 @@ module.exports = function(db, io) {
       io.of('/lobby').emit( UPDATEGAMELIST, listGameIds )
     })
   }
+  
+  function isLegalMeld(tempMeldCards) {
+    var sortedMeldCards = tempMeldCards.sort();
+
+    var length = sortedMeldCards.length;
+
+    //check if in range
+     if(length > 1 &&
+        (sortedMeldCards[length-1]%13 != sortedMeldCards[0]%13)) //checks that it is not legal same suit meld
+    {
+      if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
+        //error not in range
+        console.log("Checking Legal Meld: NOT IN RANGE");
+        return false;
+      }
+    }
+
+    for(let i = 0; i<length-1; i++) {
+      if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
+        if(!isSameSuit(sortedMeldCards[i], sortedMeldCards[i+1])) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  function isInOrder(card1, card2) {
+    if((card1 == card2+1) || (card1 == card2-1)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function isSameSuit(card1, card2) {
+    if((card1 % 13) == (card2 % 13)) {
+      return true;
+    }
+    
+    return false;
+  }
 
   /* Socket Operations */
   const game_io = io.of('/game')
@@ -116,6 +159,7 @@ module.exports = function(db, io) {
 
         json = {
           gameId : gameId,
+          meldId : 0,
           deck : deckArray,
           discard_pile : dicardPileArray,
           playerHands : {
@@ -124,7 +168,7 @@ module.exports = function(db, io) {
           },
           turn : players[0].player_id,
 
-          melds : []
+          melds : {}
         }
 
         database.addGameStateToDb(json)
@@ -167,6 +211,18 @@ module.exports = function(db, io) {
       updateGame(updatedJson)
 
     }
+    
+    const cardsMelded = (gameJSON, meldJSON) => {
+      var sortedMeldCards = meldJSON.melds.sort();
+
+      if(isLegalMeld(sortedMeldCards)) {
+        //update to db
+        //increment meldId
+        //socket.emit(SUCCESSFUL_MELD)
+      }
+      else {
+        //socket.emit(FAILED_MELD)
+      }
     /* End Game Functions */
 
     /*New player joined /game */
@@ -174,7 +230,7 @@ module.exports = function(db, io) {
     socket.on(UPDATE_CLIENT, updateGame)
     socket.on(DISCARD_CARD, cardDiscarded)
     socket.on(WITHDRAW_CARD, withdrawCard)
-    socket.on(CARDS_MELDED, updateGame)
+    socket.on(CARDS_MELDED, cardsMelded)
 
 
     socket.on('disconnect', () => {
