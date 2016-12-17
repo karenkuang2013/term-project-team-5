@@ -8,7 +8,7 @@ const UPDATE_CLIENT = 'update request client'
 const UPDATE_SERVER = 'update request server'
 const CARDS_MELDED = 'cards melded'
 const UPDATE = 'update request'
+const DISCARD_CARD = 'card discarded'
 const SUCCESS = 'success'
 
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS}
-
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD }
