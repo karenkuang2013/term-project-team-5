@@ -124,7 +124,7 @@ const takeDeckCard = (event) => {
 
 const success = (json) => {
   var turn = json.turn.toString();
-  if(turn.localeCompare(game.playerId)!=0)
+  if(turn.localeCompare(game.playerId) == 0)
   {
     $('#Deck').removeClass('enabled').addClass('disabled');
     $('#DiscardPile').removeClass('enabled').addClass('disabled');
@@ -199,7 +199,7 @@ const onSuccessfulMeld = (json) => {
   tempMeldCards.length = 0;
   
   console.log("TEMP MELD GETTING DELEATED");
-  updateGame(json);
+  updateMeldArea(json);
 }
 
 const onFailedMeld = (json) => {
@@ -214,7 +214,25 @@ const onFailedMeld = (json) => {
   $('#temp_meld').empty();
   tempMeldCards.length = 0;
   
-  updateGame(json);
+  updateMeldArea(json);
+}
+
+const updateMeldArea = (json) => {
+  //reset
+  $('#meld-area').empty();
+  
+  gameJSON = json;
+  var meldIds = Object.keys(json.melds);
+  var meldAreaSets = "";
+  
+  meldIds.forEach( (meldId) => {
+    meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>" + "<p>Meld Number: " + meldId + "</p>";
+    json.melds[meldId].forEach( (card) => {
+      meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
+    });
+    meldAreaSets = meldAreaSets + " </div>";
+  });
+  $('#meld_area').html(meldAreaSets);
 }
 
 const updateGame = (json) => {
@@ -277,7 +295,7 @@ const checkTurn = (turn) => {
 
     if(turn.localeCompare(game.playerId)==0)
     {
-      console.log("It's my turn!");
+      console.log(game.playerId + ": It's my turn!");
         $('#Deck').removeClass('enabled').addClass('disabled');
         $('#DiscardPile').removeClass('enabled').addClass('disabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
@@ -287,7 +305,8 @@ const checkTurn = (turn) => {
         messageText = "Opponent's turn";
     }
     else{
-            console.log("It's not my turn!");
+        console.log(game.playerId + ": It's not my turn!");
+        console.log("Turn: " + turn);
             
         $('#Deck').removeClass('disabled').addClass('enabled');
         $('#DiscardPile').removeClass('disabled').addClass('enabled');
