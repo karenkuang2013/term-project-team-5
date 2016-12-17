@@ -1,4 +1,4 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED, DISCARD_CARD } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD} = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -53,14 +53,15 @@ $(document).ready(function() {
 
   socket.on(UPDATE_SERVER, updateGame)
 
+  socket.on(SUCCESS, success)
+
 
 
 })
 
 const bindEvents = () => {
   $('#Deck a:not(.bound)').addClass('bound').on('click', takeDeckCard);
-  //Remove later. Added by rajat for testing
-  // $('#PlayerHand div').on('click', discardCard)
+  $('#DiscardPile a:not(.bound)').addClass('bound').on('click', takeDiscardPileCard);
 
   $('#meldToggle:not(.bound)').addClass('bound').on('click', toggleMeld);
 
@@ -96,6 +97,21 @@ const toggleMeld = () => {
   bindEvents();
 }
 
+const takeDiscardPileCard = (event) => {
+  if ($('#DiscardPile').hasClass('disabled')) return;
+
+  var card = $(event.target).attr('cardvalue');
+  console.log('player ' + game.playerId + ' clicked ' + card);
+
+  var cardId = gameJSON.discard_pile.pop()
+    console.log('player ' + game.playerId + ' clicked cardID ' + card);
+
+  gameJSON.playerHands[game.playerId].push(cardId)
+
+  socket.emit(WITHDRAW_CARD, gameJSON)
+  bindEvents();
+}
+
 const takeDeckCard = (event) => {
   if ($('#Deck').hasClass('disabled')) return;
 
@@ -107,10 +123,14 @@ const takeDeckCard = (event) => {
 
   gameJSON.playerHands[game.playerId].push(cardId)
 
-  emitUpdate();
+  socket.emit(WITHDRAW_CARD, gameJSON)
   bindEvents();
 }
 
+const success = (json) => {
+
+
+}
 
 const discardCard = (event) => {
   console.log("Discarding a card");
@@ -272,16 +292,21 @@ const checkTurn = (turn) => {
 
     if(turn != game.playerId)
     {
-        $('#Deck').addClass('disabled');
+        $('#Deck').removeClass('enabled').addClass('disabled');
+        $('#DiscardPile').removeClass('enabled').addClass('disabled');
+        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+
         messageText = "Opponent's turn";
     }
     else{
-
-        $('#Deck').addClass('enabled');
+        $('#Deck').removeClass('disabled').addClass('enabled');
+        $('#DiscardPile').removeClass('disabled').addClass('enabled');
+        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+        $('#PlayerHand').removeClass('enabled').addClass('disabled');
         messageText = "Your Turn";
     }
     messageBar.innerHTML = messageText;
-
 
 }
 
