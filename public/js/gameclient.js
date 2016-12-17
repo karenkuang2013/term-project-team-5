@@ -10,7 +10,7 @@ $(document).ready(function() {
   socket.emit('player joined', {gameId: gameId});
 
   socket.on('start game', (data) => {
-    console.log(data.msg);
+    console.log("START GAME" + data.msg);
   });
 
 });
