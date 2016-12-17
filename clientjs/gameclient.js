@@ -177,8 +177,9 @@ const stopMeldingCards = () => {
   console.log(tempMeldCards.toString());
   
   meldJSON = gameJSON;
-  meldJSON.melds.[gameJSON.meldId] = tempMeldCards;
+  meldJSON.melds[gameJSON.meldId] = tempMeldCards;
   
+  console.log("MELD JSON: " + meldJSON.toString());
   socket.emit(CARDS_MELDED, gameJSON, meldJSON);
   /* tempMeldCards = tempMeldCards.sort();
 
@@ -281,6 +282,17 @@ const updateGame = (json) => {
   discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
   
+  
+  var meldIds = Object.keys(json.melds);
+  var meldAreaSets = "";
+  meldIds.forEach( (meldId) => {
+    json.melds[meldId].forEach( (card) => {
+      meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
+    });
+  });
+  $('#meld_area').html(meldAreaSets);
+  
+  /*
   var meldSets = json.melds;
   var meldSetCount = meldSets.length;
     console.log("MELDS: " + meldSets.toString() + " LENGTH:" + meldSetCount);
@@ -296,7 +308,7 @@ const updateGame = (json) => {
       $('#meld_area').append("<div id='card"+card+"' cardvalue="+card+" />");
     });
   }
-
+  */
   checkTurn(json.turn.toString());
   bindEvents();
 }

@@ -12,6 +12,7 @@ module.exports = function(db, io) {
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
+  const NUM_CARDS_IN_SUIT = 13;
 
   let playerId;
   let username;
@@ -69,15 +70,14 @@ module.exports = function(db, io) {
   
   function isLegalMeld(tempMeldCards) {
     var sortedMeldCards = tempMeldCards.sort();
-
     var length = sortedMeldCards.length;
 
     //check if in range
      if(length > 1 &&
-        (sortedMeldCards[length-1]%13 != sortedMeldCards[0]%13)) //checks that it is not legal same suit meld
+        //checks that it is not a legal same suit meld
+        (sortedMeldCards[length-1]%NUM_CARDS_IN_SUIT != sortedMeldCards[0]%NUM_CARDS_IN_SUIT)) 
     {
       if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
-        //error not in range
         console.log("Checking Legal Meld: NOT IN RANGE");
         return false;
       }
@@ -85,12 +85,14 @@ module.exports = function(db, io) {
 
     for(let i = 0; i<length-1; i++) {
       if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
-        if(!isSameSuit(sortedMeldCards[i], sortedMeldCards[i+1])) {
+        if(!isSameRank(sortedMeldCards[i], sortedMeldCards[i+1])) {
+          //bug: 1 spade, 2 heart, 
           return false;
         }
       }
     }
 
+    console.log("Checking Legal Meld: IS LEGAL");
     return true;
   }
 
@@ -102,7 +104,7 @@ module.exports = function(db, io) {
     return false;
   }
 
-  function isSameSuit(card1, card2) {
+  function isSameRank(card1, card2) {
     if((card1 % 13) == (card2 % 13)) {
       return true;
     }
@@ -177,8 +179,6 @@ module.exports = function(db, io) {
       });
     }
 
-
-
     const updateGame = (json) => {
       database.addGameStateToDb(json);
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
@@ -209,20 +209,21 @@ module.exports = function(db, io) {
       console.log('server got discard request');
       console.log(updatedJson);
       updateGame(updatedJson)
-
     }
     
     const cardsMelded = (gameJSON, meldJSON) => {
-      var sortedMeldCards = meldJSON.melds.sort();
-
-      if(isLegalMeld(sortedMeldCards)) {
+      if(isLegalMeld(meldJSON.melds[meldJSON.meldId])) {
         //update to db
         //increment meldId
+        meldJSON.meldId++;
+        updateGame(meldJSON);
         //socket.emit(SUCCESSFUL_MELD)
       }
       else {
+        
         //socket.emit(FAILED_MELD)
       }
+    }
     /* End Game Functions */
 
     /*New player joined /game */
