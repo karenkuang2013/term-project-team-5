@@ -115,7 +115,8 @@ module.exports = function(db, io) {
         }
         else {
           console.log('player rejoined');
-          updateGame(result.gamejson)
+          let updatedJson = switchPlayers(result.gamejson)
+          updateGame(updatedJson)
         }
       })
 
