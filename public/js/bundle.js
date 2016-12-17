@@ -293,7 +293,31 @@ const updateGame = (json) => {
 const checkTurn = (turn) => {
     var messageBar = document.getElementById("Message");
     var messageText = '';
+    
+    if(turn.localeCompare(game.playerId)==0)
+    {
+      console.log(game.playerId + ": It's my turn!");
+      console.log("Turn: " + turn);
+      $('#Deck').removeClass('disabled').addClass('enabled');
+      $('#DiscardPile').removeClass('disabled').addClass('enabled');
+      $('#PlayerHand').removeClass('enabled').addClass('disabled');
+      //$('#meldToggle').prop( "disabled", false );
+      //$('#cancel').prop( "disabled", true );
 
+      messageText = "Your turn";
+    }
+    else {
+      console.log(game.playerId + ": It's not my turn!");
+      console.log("Turn: " + turn);
+            
+      $('#Deck').removeClass('enabled').addClass('disabled');
+      $('#DiscardPile').removeClass('enabled').addClass('disabled');
+      $('#PlayerHand').removeClass('enabled').addClass('disabled');
+      //$('#meldToggle').prop( "disabled", true );
+      //$('#cancel').prop( "disabled", true );
+      messageText = "Opponent's Turn";
+    }
+    /*
     if(turn.localeCompare(game.playerId)==0)
     {
       console.log(game.playerId + ": It's my turn!");
@@ -316,6 +340,7 @@ const checkTurn = (turn) => {
         //$('#cancel').prop( "disabled", true );
         messageText = "Your Turn";
     }
+    */
     messageBar.innerHTML = messageText;
 
 }
