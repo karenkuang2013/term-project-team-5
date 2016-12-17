@@ -135,6 +135,18 @@ module.exports = function(db, io) {
       database.addGameStateToDb(json);
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
     }
+
+    const switchPlayers = (json) => {
+      let players = Object.keys(json.playerHands)
+
+      if(players[0].localeCompare(json.turn)==0){
+        json.turn = players[1]
+      }
+      else {
+        json.turn = players[0]
+      }
+      return json
+    }
     /* End Game Functions */
 
     /*New player joined /game */
