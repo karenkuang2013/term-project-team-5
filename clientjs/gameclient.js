@@ -128,10 +128,17 @@ const takeDeckCard = (event) => {
 
 const success = (json) => {
     
-    
+     $('#Deck').removeClass('enabled').addClass('disabled');
+     $('#DiscardPile').removeClass('enabled').addClass('disabled');
+     $('#PlayerHand').removeClass('disabled').addClass('enabled');
+     $('#meldToggle').prop( "disabled", false );
+     $('#cancel').prop( "disabled", false );
+     
 }
 
 const discardCard = (event) => {
+  
+  if ($('#PlayerHand').hasClass('disabled')) return;
   console.log("Discarding a card");
   var card = $(event.target).attr('cardvalue');
   console.log("TYPE OF:" + typeof card);
@@ -196,9 +203,6 @@ const stopMeldingCards = () => {
   
   socket.emit(CARDS_MELDED, gameJSON);
   
-  
-  
-
   //var toBeMeldedCards = $('#temp_meld').
   
   //checkLegalMeld() //will check if it is a meld itself, or if it can be melded into
@@ -290,12 +294,13 @@ const checkTurn = (turn) => {
     var messageBar = document.getElementById("Message");
     var messageText = '';
 
-    if(turn != game.playerId)
+    if(turn.localeCompare(game.playerId)==0)
     {
         $('#Deck').removeClass('enabled').addClass('disabled');
         $('#DiscardPile').removeClass('enabled').addClass('disabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+        $('#meldToggle').prop( "disabled", true );
+        $('#cancel').prop( "disabled", true );
         
         messageText = "Opponent's turn";
     }
@@ -303,7 +308,8 @@ const checkTurn = (turn) => {
         $('#Deck').removeClass('disabled').addClass('enabled');
         $('#DiscardPile').removeClass('disabled').addClass('enabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+        $('#meldToggle').prop( "disabled", true );
+        $('#cancel').prop( "disabled", true );
         messageText = "Your Turn";
     }
     messageBar.innerHTML = messageText;

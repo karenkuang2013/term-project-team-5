@@ -1,9 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-<<<<<<< HEAD
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT ,WITHDRAW_CARD, SUCCESS} = require('../constants/events')
-=======
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED } = require('../constants/events')
->>>>>>> 599f29c3aa409e69e287ae92bf20ee3b49845070
+
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED ,WITHDRAW_CARD, SUCCESS} = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -132,10 +129,17 @@ const takeDeckCard = (event) => {
 
 const success = (json) => {
     
-    
+     $('#Deck').removeClass('enabled').addClass('disabled');
+     $('#DiscardPile').removeClass('enabled').addClass('disabled');
+     $('#PlayerHand').removeClass('disabled').addClass('enabled');
+     $('#meldToggle').prop( "disabled", false );
+     $('#cancel').prop( "disabled", false );
+     
 }
 
 const discardCard = (event) => {
+  
+  if ($('#PlayerHand').hasClass('disabled')) return;
   console.log("Discarding a card");
   var card = $(event.target).attr('cardvalue');
   console.log("TYPE OF:" + typeof card);
@@ -200,9 +204,6 @@ const stopMeldingCards = () => {
   
   socket.emit(CARDS_MELDED, gameJSON);
   
-  
-  
-
   //var toBeMeldedCards = $('#temp_meld').
   
   //checkLegalMeld() //will check if it is a meld itself, or if it can be melded into
@@ -294,12 +295,13 @@ const checkTurn = (turn) => {
     var messageBar = document.getElementById("Message");
     var messageText = '';
 
-    if(turn != game.playerId)
+    if(turn.localeCompare(game.playerId)==0)
     {
         $('#Deck').removeClass('enabled').addClass('disabled');
         $('#DiscardPile').removeClass('enabled').addClass('disabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+        $('#meldToggle').prop( "disabled", true );
+        $('#cancel').prop( "disabled", true );
         
         messageText = "Opponent's turn";
     }
@@ -307,7 +309,8 @@ const checkTurn = (turn) => {
         $('#Deck').removeClass('disabled').addClass('enabled');
         $('#DiscardPile').removeClass('disabled').addClass('enabled');
         $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        $('#PlayerHand').removeClass('enabled').addClass('disabled');
+        $('#meldToggle').prop( "disabled", true );
+        $('#cancel').prop( "disabled", true );
         messageText = "Your Turn";
     }
     messageBar.innerHTML = messageText;
@@ -339,11 +342,7 @@ const CARDS_MELDED = 'cards melded'
 const UPDATE = 'update request'
 const SUCCESS = 'success'
 
-<<<<<<< HEAD
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, UPDATE, SUCCESS }
-=======
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE }
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS}
 
->>>>>>> 599f29c3aa409e69e287ae92bf20ee3b49845070
 
 },{}]},{},[1]);
