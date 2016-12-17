@@ -192,11 +192,10 @@ const stopMeldingCards = () => {
 
   if(isLegalMeld(tempMeldCards)) {
     gameJSON.melds.push(tempMeldCards);
+    socket.emit(CARDS_MELDED, gameJSON);
   }
 
-  socket.emit(CARDS_MELDED, gameJSON);
-
-
+  bindEvents();
 
 
   //var toBeMeldedCards = $('#temp_meld').
@@ -291,7 +290,20 @@ const updateGame = (json) => {
   $('#DiscardPile').html(discardPile)
   
   var meldSets = json.melds;
-  //meldSets.forEach(())
+  var meldSetCount = meldSets.length;
+    console.log("MELDS: " + meldSets.toString() + " LENGTH:" + meldSetCount);
+
+  $('#meld_area').empty();
+  for(let i = 0; i < meldSetCount; i++) {
+      console.log("INSIDE MELDS: " + meldSets[i]);
+
+    //$('#meld_area').append("<div id='meld"+ i + "' class='row'></div>");
+    
+    meldSets[i].forEach((card) => {
+      //$('#meld'+i).append("<div id='card"+card+"' cardvalue="+card+" />");
+      $('#meld_area').append("<div id='card"+card+"' cardvalue="+card+" />");
+    });
+  }
 
   checkTurn(json.turn.toString());
   bindEvents();
