@@ -128,13 +128,14 @@ module.exports = function(db, io) {
           turn : players[0].player_id
         }
         
-        database.addGameStateToDb(json, true)
+        database.addGameStateToDb(json)
         
         return json
       });
     }
 
     const updateGame = (json) => {
+      database.addGameStateToDb(json);
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
     }
     /* End Game Functions */
