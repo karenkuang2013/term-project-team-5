@@ -1,5 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+<<<<<<< HEAD
 var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT ,WITHDRAW_CARD, SUCCESS} = require('../constants/events')
+=======
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED } = require('../constants/events')
+>>>>>>> 599f29c3aa409e69e287ae92bf20ee3b49845070
 var socket = io('/game');
 
 initChat(socket);
@@ -11,6 +15,8 @@ var game = {
 }
 
 var gameJSON
+var tempMeldCards = [] //array of ints
+const NUM_CARDS_IN_SUIT = 13;
 
 const intializeSocket = () => {
   socket.on( WAIT, displayWait )
@@ -71,6 +77,12 @@ const bindEvents = () => {
 }
 
 const toggleMeld = () => {
+  //unbind cards event handler so that the previously attached event handler
+  //will not execute before meld state is changed and new event handler
+  //is attached by bindEvents()
+  $('#PlayerHand div').removeClass('bound');
+  $('#PlayerHand div').off();
+  
   if($('#meldToggle').attr('value') == 'meld_off') {
     console.log("Turning meld on")
     $('#meldToggle').attr('value', 'meld_on');
@@ -80,6 +92,9 @@ const toggleMeld = () => {
     console.log("Turning meld off")
     $('#meldToggle').attr('value', 'meld_off');
     $('#meldToggle').html('Start Meld');
+    
+    //call stop meld
+    stopMeldingCards();
   }
 
   bindEvents();
@@ -124,9 +139,9 @@ const discardCard = (event) => {
   console.log("Discarding a card");
   var card = $(event.target).attr('cardvalue');
   console.log("TYPE OF:" + typeof card);
-
-
-  if(card >=1 && card <= 52) {
+  
+  //possible bug because card is a string
+ if(card >=1 && card <= 52) {
     var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card));
     console.log('Index of card to remove: ' + indexOfCardToRemove);
     console.log("ARRAY TO STRING:" + gameJSON.playerHands[game.playerId].toString());
@@ -137,15 +152,102 @@ const discardCard = (event) => {
   //remove from player's hand
   gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
   //add to deck
+  console.log("DISCARD PILE BEFORE:" + gameJSON.discard_pile.toString());
   gameJSON.discard_pile.push(card);
-
+  console.log("DISCARD PILE AFTER:" + gameJSON.discard_pile.toString());
+  
   emitUpdate();
   bindEvents();
 }
 
 //not working. make sure toggleMeld is working
-const pickMeldCards = () => {
+const pickMeldCards = (event) => {
   console.log("Picking meld cards");
+  
+  var card = $(event.target).attr('cardvalue');
+  console.log("TYPE OF:" + typeof card);
+  
+  $('#temp_meld').append("<div id='card"+card+"' cardvalue="+card+" />")
+  tempMeldCards.push(parseInt(card));
+  
+  var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card)); 
+  gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
+
+  emitUpdate();
+  bindEvents();
+  /*var meldObj = {
+          playerId : game.playerId,
+          cards_melded : meldSet
+          }
+  */
+  
+  /*var meldJSON = {
+        [melds] = {
+          player : game.playerId,
+          cards_melded : [1, 2, 3]
+          }
+  }*/
+  
+}
+  
+const stopMeldingCards = () => {
+  console.log(tempMeldCards.toString());
+  tempMeldCards = tempMeldCards.sort();
+  
+  if(isLegalMeld(tempMeldCards)) {
+    gameJASON.melds.push(tempMeldCards);
+  }
+  
+  socket.emit(CARDS_MELDED, gameJSON);
+  
+  
+  
+
+  //var toBeMeldedCards = $('#temp_meld').
+  
+  //checkLegalMeld() //will check if it is a meld itself, or if it can be melded into
+  //already existing meld set (this will take precedence than starting a new meld)
+  
+  //if legal, update gameJSON meld array (gameUpdate will render meld area automatically)
+}
+
+function isLegalMeld(tempMeldCards) {
+  var sortedMeldCards = tempMeldCards.sort();
+  
+  var length = sortedMeldCards.length;
+  
+  //check if in range
+  if(length > 1) {
+    if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
+      //error not in range
+      console.log("Checking Legal Meld: NOT IN RANGE");
+      return false;
+    }
+  }
+  
+  for(let i = 0; i<length-1; i++) {
+    if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function isInOrder(card1, card2) {
+  if((card1 == card2+1) || (card1 == card2-1)) {
+    return true;
+  }
+  
+  return false;
+}
+
+function isSameSuit(card1, card2) {
+  
+}
+
+function checkLegalLayoff() {
+  
 }
 
 const emitUpdate = () => {
@@ -233,9 +335,15 @@ const WELCOME = 'welcome'
 const WAIT = 'wait for other players'
 const UPDATE_CLIENT = 'update request client'
 const UPDATE_SERVER = 'update request server'
+const CARDS_MELDED = 'cards melded'
 const UPDATE = 'update request'
 const SUCCESS = 'success'
 
+<<<<<<< HEAD
 module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, UPDATE, SUCCESS }
+=======
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE }
+
+>>>>>>> 599f29c3aa409e69e287ae92bf20ee3b49845070
 
 },{}]},{},[1]);
