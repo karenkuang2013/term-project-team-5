@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD }
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
@@ -213,15 +213,18 @@ module.exports = function(db, io) {
     
     const cardsMelded = (gameJSON, meldJSON) => {
       if(isLegalMeld(meldJSON.melds[meldJSON.meldId])) {
+        console.log("IS LEGAL MELD");
         //update to db
         //increment meldId
         meldJSON.meldId++;
-        updateGame(meldJSON);
-        //socket.emit(SUCCESSFUL_MELD)
+        game_io.to(meldJSON.gameId.toString()).emit(SUCCESSFUL_MELD, meldJSON);
       }
       else {
-        
-        //socket.emit(FAILED_MELD)
+        //why does gameJSON have the melded cards? shouldn't onlymeldJSON have it?
+        console.log("IS NOT LEGAL MELD");
+        gameJSON.melds[gameJSON.meldId].length = 0; //clear last meld
+        console.log(gameJSON.melds[gameJSON.meldId].toString());
+        game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
       }
     }
     /* End Game Functions */
@@ -232,7 +235,6 @@ module.exports = function(db, io) {
     socket.on(DISCARD_CARD, cardDiscarded)
     socket.on(WITHDRAW_CARD, withdrawCard)
     socket.on(CARDS_MELDED, cardsMelded)
-
 
     socket.on('disconnect', () => {
       console.log("user disconnected from /game namespace");

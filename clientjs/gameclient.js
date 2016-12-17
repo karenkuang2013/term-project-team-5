@@ -1,4 +1,4 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD} = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -36,14 +36,11 @@ $(document).ready(function() {
   bindEvents()
   intializeSocket()
 
-
   socket.emit( PLAYER_JOINED, {gameId: game.gameId} )
 
   socket.on( WELCOME, (data) => {
     game.playerId = data.playerId;
   })
-
-  //intializeSocket()
 
   socket.on(STARTGAME, (json) => {
     gameJSON = json
@@ -51,12 +48,10 @@ $(document).ready(function() {
     updateGame(json);
   })
 
-  socket.on(UPDATE_SERVER, updateGame)
-
-  socket.on(SUCCESS, success)
-
-
-
+  socket.on(UPDATE_SERVER, updateGame);
+  socket.on(SUCCESS, success);
+  socket.on(SUCCESSFUL_MELD, onSuccessfulMeld);
+  socket.on(FAILED_MELD, onFailedMeld);
 })
 
 const bindEvents = () => {
@@ -156,7 +151,6 @@ const discardCard = (event) => {
   bindEvents();
 }
 
-//not working. make sure toggleMeld is working
 const pickMeldCards = (event) => {
   console.log("Picking meld cards");
 
@@ -199,66 +193,38 @@ const stopMeldingCards = () => {
   //if legal, update gameJSON meld array (gameUpdate will render meld area automatically)
 }
 
-function isLegalMeld(tempMeldCards) {
-  var sortedMeldCards = tempMeldCards.sort();
-
-  var length = sortedMeldCards.length;
-
-  //check if in range
-   if(length > 1 &&
-      (sortedMeldCards[length-1]%13 != sortedMeldCards[0]%13)) //checks that it is not legal same suit meld
-  {
-    if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
-      //error not in range
-      console.log("Checking Legal Meld: NOT IN RANGE");
-      return false;
-    }
-  }
-
-  for(let i = 0; i<length-1; i++) {
-    if(!isInOrder(sortedMeldCards[i], sortedMeldCards[i+1])) {
-      if(!isSameSuit(sortedMeldCards[i], sortedMeldCards[i+1])) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-function isInOrder(card1, card2) {
-  if((card1 == card2+1) || (card1 == card2-1)) {
-    return true;
-  }
-
-  return false;
-}
-
-function isSameSuit(card1, card2) {
-  if((card1 % 13) == (card2 % 13)) {
-    return true;
-  }
-  
-  return false;
-}
-
-function checkLegalLayoff() {
-
-}
-
 const emitUpdate = () => {
   socket.emit(UPDATE_CLIENT, gameJSON)
+}
+
+/* Socket event hanlders */
+const onSuccessfulMeld = (json) => {
+  $('#temp_meld').empty();
+  console.log("TEMP MELD GETTING DELEATED");
+  updateGame(json);
+}
+
+const onFailedMeld = (json) => {
+  $('#temp_meld').empty();
+    console.log("FAILED TEMP MELD GETTING DELEATED");
+
+  tempMeldCards.forEach( (card) => {
+    json.playerHands[game.playerId].push(card);
+  });
+  
+  updateGame(json);
 }
 
 const updateGame = (json) => {
   $('#gameArea').show();
   $('#waitingArea').hide();
   gameJSON = json
+  
   var playerHand = ""
   var opponentHand = ""
 
+  /* Players' Hands rendering */
   var players = Object.keys(json.playerHands)
-
   players.forEach((p) => {
     if(p.localeCompare(game.playerId)==0){
       json.playerHands[p].forEach((value)=> {
@@ -274,44 +240,34 @@ const updateGame = (json) => {
     }
   })
 
+  /* Deck rendering */
   var deck = ""
   deck = "<a><div id='card53' cardvalue="+json.deck[json.deck.length-1]+" /></a>";
   $('#Deck').html(deck)
 
+  /* Discard Pile rendering */
   var discardPile = ""
   discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[0]+" /></a>";
   $('#DiscardPile').html(discardPile)
   
   
+  /* Meld area rendering */
+  $('#meld-area').empty();
   var meldIds = Object.keys(json.melds);
   var meldAreaSets = "";
   meldIds.forEach( (meldId) => {
+    meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>" + "<p>Meld Number: " + meldId + "</p>";
     json.melds[meldId].forEach( (card) => {
       meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
     });
+    meldAreaSets = meldAreaSets + " </div>";
   });
   $('#meld_area').html(meldAreaSets);
   
-  /*
-  var meldSets = json.melds;
-  var meldSetCount = meldSets.length;
-    console.log("MELDS: " + meldSets.toString() + " LENGTH:" + meldSetCount);
-
-  $('#meld_area').empty();
-  for(let i = 0; i < meldSetCount; i++) {
-      console.log("INSIDE MELDS: " + meldSets[i]);
-
-    //$('#meld_area').append("<div id='meld"+ i + "' class='row'></div>");
-    
-    meldSets[i].forEach((card) => {
-      //$('#meld'+i).append("<div id='card"+card+"' cardvalue="+card+" />");
-      $('#meld_area').append("<div id='card"+card+"' cardvalue="+card+" />");
-    });
-  }
-  */
   checkTurn(json.turn.toString());
   bindEvents();
 }
+/*End Socket event handlers */
 
 const checkTurn = (turn) => {
     var messageBar = document.getElementById("Message");
