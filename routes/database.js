@@ -116,6 +116,47 @@ let database = function (db) {
               })
   }
 
+  //rajat
+  this.verifyPlayer = (gameId, playerId) => {
+    return db.oneOrNone("Select * from gameplayers where game_id = $1 and player_id = $2", [gameId, playerId])
+    .then( (result) => {
+      return result
+    })
+    .catch( (err) => {
+      console.log(err)
+    })
+  }
+
+  this.addGameState_JSON = (gameId, json) => {
+
+    return db.none("INSERT INTO gamestate(game_id, gamejson) values ($1, $2)", [gameId, json])
+    .then( () => {
+    })
+    .catch( (err) => {
+      console.log(err);
+    })
+  }
+
+  this.updateGameState_JSON = (gameId, json) => {
+
+    return db.none("UPDATE gamestate set gamejson = $2 where game_id = $1", [gameId, json])
+    .then( () => {
+    })
+    .catch( (err) => {
+      console.log(err);
+    })
+  }
+
+  this.getGameState_JSON = (gameId) => {
+
+    return db.oneOrNone("Select * from gamestate where game_id = $1", [gameId])
+    .then( (result) => {
+      return result
+    })
+    .catch( (err) => {
+      console.log(err)
+    })
+  }
 }
 
 module.exports = database;

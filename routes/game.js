@@ -39,8 +39,19 @@ module.exports = function(db, io) {
     playerId = session.player_id
     username = session.user;
 
-    //todo: remove the unnecessary arguments
-    resp.render('game_rajat', { USERNAME:username, name:req.session.user, playerId: req.session.player_id, gameId: gameId})
+    database.verifyPlayer(gameId, playerId)
+    .then ( (result) => {
+      if(!result) {
+        console.log('player doesnt exist');
+        resp.redirect('/lobby')
+      }
+      else {
+        console.log('player exists');
+        //todo: remove the unnecessary arguments
+        resp.render('game_rajat', { USERNAME:username, name:req.session.user, playerId: req.session.player_id, gameId: gameId})
+      }
+    })
+
   })
 
   /* Route for join Game */
@@ -49,7 +60,9 @@ module.exports = function(db, io) {
     //note: gameId is global because of no var/let/anything keyword
     //gameId = req.params.gameId
     database.createGamePlayer(req.params.gameId, req.session.player_id)
-    resp.redirect('/game/' + gameId)
+    .then( () => {
+      resp.redirect('/game/' + gameId)
+    })
 
   })
 
@@ -80,21 +93,33 @@ module.exports = function(db, io) {
       socket.join(data.gameId.toString())
       game_io.to(data.gameId.toString()).emit("user_entered_chat", "User " + username + " has entered the room...");
 
-      let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
+      /* Check if game state is present in DB, ie, the player has rejoined */
+      database.getGameState_JSON(data.gameId)
+      .then((result) => {
+        if(!result) {
+          let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
 
-      if(playerCount == MAX_PLAYERS) {
-        initialiseCardsJSON(gameId)
-        .then ((gameJSON) => {
-          game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
-        })
-        database.updateAvailableGames(gameId)
-        .then (() => {
-          broadcastGameList()
-        })
-      }
-      else {
-        game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )
-      }
+          if(playerCount == MAX_PLAYERS) {
+            initialiseCardsJSON(gameId)
+            .then ((gameJSON) => {
+              game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
+            })
+            database.updateAvailableGames(gameId)
+            .then (() => {
+              broadcastGameList()
+            })
+          }
+          else {
+            game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )
+          }
+        }
+        else {
+          console.log('player rejoined');
+          let updatedJson = switchPlayers(result.gamejson)
+          updateGame(updatedJson)
+        }
+      })
+
     }
 
     const initialiseCardsJSON = (gameId) => {
@@ -126,8 +151,9 @@ module.exports = function(db, io) {
 
           melds : []
         }
-
-        database.addGameStateToDb(json)
+        //rajat
+        //database.addGameStateToDb(json)
+        database.addGameState_JSON(gameId, json)
 
         return json
       });
@@ -136,7 +162,9 @@ module.exports = function(db, io) {
 
 
     const updateGame = (json) => {
-      database.addGameStateToDb(json);
+      //rajat
+      // database.addGameStateToDb(json);
+      database.updateGameState_JSON(json.gameId, json)
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
     }
 
@@ -163,7 +191,6 @@ module.exports = function(db, io) {
       let updatedJson = switchPlayers(json)
 
       console.log('server got discard request');
-      console.log(updatedJson);
       updateGame(updatedJson)
 
     }
@@ -183,10 +210,10 @@ module.exports = function(db, io) {
       if(typeof gameId != 'undefined') {
         game_io.to(gameId).emit("user_left_chat", "User " + session.user + " has left the room...");
 
-        database.updateAvailableGames(gameId)
-        .then (() => {
-          broadcastGameList()
-        })
+        // database.updateAvailableGames(gameId)
+        // .then (() => {
+        //   broadcastGameList()
+        // })
       }
     });
 

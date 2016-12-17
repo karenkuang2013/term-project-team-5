@@ -143,10 +143,9 @@ const discardCard = (event) => {
 
   if ($('#PlayerHand').hasClass('disabled')) return;
   console.log("Discarding a card");
-  var card = $(event.target).attr('cardvalue');
+  var card = parseInt($(event.target).attr('cardvalue'));
   console.log("TYPE OF:" + typeof card);
 
-  //possible bug because card is a string
  if(card >=1 && card <= 52) {
     var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card));
     console.log('Index of card to remove: ' + indexOfCardToRemove);
@@ -285,7 +284,7 @@ const updateGame = (json) => {
   $('#Deck').html(deck)
 
   var discardPile = ""
-  discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[0]+" /></a>";
+  discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[json.discard_pile.length-1]+" /></a>";
   $('#DiscardPile').html(discardPile)
 
   checkTurn(json.turn.toString());
