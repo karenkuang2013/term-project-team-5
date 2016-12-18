@@ -61,6 +61,15 @@ a {
   margin-top: 10px;
 }
 
+#Message{
+    display: inline;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: pink;
+    text-align: center;
+    color: black;
+}
+
 /* HELPER CLASSES */
 #nav {
     padding-top: 5px;
