@@ -54,7 +54,7 @@ module.exports = function(db, io) {
 
   //register page
   router.get('/register', function (request, response) {
-    response.render('registration');
+    response.render('registration',{ errormsg: false});
   });
 
   //register page

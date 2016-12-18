@@ -48,7 +48,8 @@ let database = function (db) {
     .then(function () {
       response.redirect('/login');
     })
-    .catch(function (error) {
+    .catch(function (error) {  
+      response.render('registration',{ errormsg: true});
       console.log(error);
     });
    }
