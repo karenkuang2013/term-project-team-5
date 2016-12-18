@@ -67,8 +67,7 @@ module.exports = function(db, io) {
       })
     })
     .catch((err) => {
-      //redirect to register with error
-      console.log('Ooops');
+      response.render('registration',{ errormsg: true});
     })
   });
 

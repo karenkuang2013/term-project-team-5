@@ -50,7 +50,6 @@ let database = function (db) {
       return result
     })
     .catch(function (error) {  
-      response.render('registration',{ errormsg: true});
       console.log(error);
     });
    }
