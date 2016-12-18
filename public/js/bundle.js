@@ -209,24 +209,32 @@ const onSuccessfulMeld = (json) => {
 
 const onFailedMeld = (json) => {
   console.log("FAILED TEMP MELD GETTING DELEATED");
-
+  var playerHand = "";
+  var turn = json.turn.toString();
+  
   //return temp meld cards to players' hands
   tempMeldCards.forEach( (card) => {
     json.playerHands[game.playerId].push(card);
   });
   
+  /* Render only the current turn Player's hands  */
+  if(game.playerId == turn) {
+    json.playerHands[game.playerId].forEach((value)=> {
+      playerHand = playerHand + "<div id='card"+value+"' cardvalue="+value+" />";
+    })
+    $('#PlayerHand').html(playerHand);
+  }
+  
   //reset temp meld
   $('#temp_meld').empty();
   tempMeldCards.length = 0;
-  
-  updateMeldArea(json);
 }
 
 const onSuccessfulMeldPick = (json) => {
   var playerHand = "";
   var turn = json.turn.toString();
   
-  /* Players' Hands rendering */
+  /* Render only the current turn Player's hands  */
   if(game.playerId == turn) {
     json.playerHands[game.playerId].forEach((value)=> {
       playerHand = playerHand + "<div id='card"+value+"' cardvalue="+value+" />";
