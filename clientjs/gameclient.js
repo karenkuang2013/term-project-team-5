@@ -267,7 +267,7 @@ const updateMeldArea = (json) => {
   var meldAreaSets = "";
   
   meldIds.forEach( (meldId) => {
-    meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>" + "<p>Meld Number: " + meldId + "</p>";
+    meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>";
     json.melds[meldId].forEach( (card) => {
       meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
     });
@@ -317,7 +317,7 @@ const updateGame = (json) => {
   var meldIds = Object.keys(json.melds);
   var meldAreaSets = "";
   meldIds.forEach( (meldId) => {
-    meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>" + "<p>Meld Number: " + meldId + "</p>";
+    meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>";
     json.melds[meldId].forEach( (card) => {
       meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
     });

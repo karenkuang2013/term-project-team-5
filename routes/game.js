@@ -88,10 +88,10 @@ module.exports = function(db, io) {
     var isOrdered = true;
     var isRanked = true;
 
+    if(length > 2) {
     //check if in range
-     if(length > 1 &&
-        //checks that it is not a legal same suit meld
-        (sortedMeldCards[length-1]%NUM_CARDS_IN_SUIT != sortedMeldCards[0]%NUM_CARDS_IN_SUIT)) 
+    //checks that it is not a legal same suit meld
+      if((sortedMeldCards[length-1]%NUM_CARDS_IN_SUIT != sortedMeldCards[0]%NUM_CARDS_IN_SUIT)) 
     {
       if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
         console.log("Checking Legal Meld: NOT IN RANGE");
@@ -124,6 +124,8 @@ module.exports = function(db, io) {
 
     console.log("Checking Legal Meld: IS LEGAL");
     return true;
+    }
+    return false;
   }
 
   function isInOrderAndSameSuit(card1, card2) {
