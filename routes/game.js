@@ -69,6 +69,7 @@ module.exports = function(db, io) {
   }
   
   function isLegalMeld(tempMeldCards) {
+    console.log("TEMP: " + tempMeldCards.toString());
     var sortedMeldCards = tempMeldCards.sort();
     var length = sortedMeldCards.length;
     var isOrdered = true;

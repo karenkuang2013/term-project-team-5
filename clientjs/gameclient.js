@@ -201,7 +201,7 @@ const pickMeldCards = (event) => {
 const stopMeldingCards = () => {
   console.log(tempMeldCards.toString());
   
-  var meldJSON = gameJSON;
+  meldJSON = gameJSON;
   meldJSON.melds[gameJSON.meldId] = tempMeldCards;
   
   console.log("MELD JSON: " + meldJSON.toString());
