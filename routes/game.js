@@ -291,6 +291,7 @@ module.exports = function(db, io) {
         console.log(gameJSON.melds[gameJSON.layoffId].toString());
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
       }
+     
     }
     
     const cardsMelded = (gameJSON, meldJSON) => {
@@ -308,6 +309,7 @@ module.exports = function(db, io) {
         console.log(gameJSON.melds[gameJSON.meldId].toString());
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
       }
+     
     }
     
     const pickedMeldCard = (json) => {

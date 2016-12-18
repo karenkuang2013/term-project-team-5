@@ -96,7 +96,7 @@ const toggleMeld = () => {
 
 const takeDiscardPileCard = (event) => {
   if ($('#DiscardPile').hasClass('disabled')) return;
-
+  
   var card = $(event.target).attr('cardvalue');
   console.log('player ' + game.playerId + ' clicked ' + card);
 
@@ -128,11 +128,12 @@ const success = (json) => {
   var turn = json.turn.toString();
   if(turn.localeCompare(game.playerId) == 0)
   {
+      console.log('here'+ turn)
     $('#Deck').removeClass('enabled').addClass('disabled');
     $('#DiscardPile').removeClass('enabled').addClass('disabled');
     $('#PlayerHand').removeClass('disabled').addClass('enabled');
-    //$('#meldToggle').prop( "disabled", false );
-    //$('#cancel').prop( "disabled", false );
+    $('#meldToggle').prop( "disabled", false );
+    $('#cancel').prop( "disabled", false );
   }
 }
 
@@ -165,8 +166,9 @@ const layoffMeldCards = (event) => {
   console.log("Laying off cards");
   //regex to get number from meld id div
   var regexDigit = /\d+/;
-  var cardsDiv = $(event.target).parent();
-  var meldId = parseInt(cardsDiv.attr('id').match(regexDigit));
+  var cardsDivid = $(event.target.parentNode).attr('id');
+  console.log("div id " + cardsDivid);
+  var meldId = parseInt(cardsDivid.match(regexDigit));
   console.log("MELD ID: " + meldId);
     
   var layoffJSON = gameJSON;
@@ -179,6 +181,7 @@ const layoffMeldCards = (event) => {
   socket.emit(CARDS_LAYOFF, { meldJSON:layoffJSON, gameJSON:gameJSON, layoffLength:tempMeldCards.length });
 
   bindEvents();
+  event.stopPropagation();
 }
 
 const pickMeldCards = (event) => {
@@ -218,19 +221,16 @@ const onSuccessfulMeld = (json) => {
   //reset temp meld
   $('#temp_meld').empty();
   tempMeldCards.length = 0;
-  
-  //remove from player hands
-  
-  
   console.log("TEMP MELD GETTING DELEATED");
-  updateMeldArea(json);
+ // updateMeldArea(json);
+  updateGame(json);
+  success(json);
 }
 
 const onFailedMeld = (json) => {
-  console.log("FAILED TEMP MELD GETTING DELEATED");
+  console.log("FAILED TEMP MELD GETTING DELETED");
   
   //try to layoff it
-  
   //else fail it
   var playerHand = "";
   var turn = json.turn.toString();
@@ -239,18 +239,10 @@ const onFailedMeld = (json) => {
   tempMeldCards.forEach( (card) => {
     json.playerHands[game.playerId].push(card);
   });
-  
-  /* Render only the current turn Player's hands  */
-  if(game.playerId == turn) {
-    json.playerHands[game.playerId].forEach((value)=> {
-      playerHand = playerHand + "<div id='card"+value+"' cardvalue="+value+" />";
-    })
-    $('#PlayerHand').html(playerHand);
-  }
-  
-  //reset temp meld
   $('#temp_meld').empty();
   tempMeldCards.length = 0;
+  updateGame(json);
+  success(json);
 }
 
 const onSuccessfulMeldPick = (json) => {
@@ -263,15 +255,13 @@ const onSuccessfulMeldPick = (json) => {
       playerHand = playerHand + "<div id='card"+value+"' cardvalue="+value+" />";
     })
     $('#PlayerHand').html(playerHand);
-  }
-  
+  } 
   bindEvents();
 }
 
 const updateMeldArea = (json) => {
   //reset
-  $('#meld-area').empty();
-  
+  $('#meld-area').empty(); 
   gameJSON = json;
   var meldIds = Object.keys(json.melds);
   var meldAreaSets = "";
@@ -351,8 +341,8 @@ const checkTurn = (turn) => {
       $('#Deck').removeClass('disabled').addClass('enabled');
       $('#DiscardPile').removeClass('disabled').addClass('enabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
-      //$('#meldToggle').prop( "disabled", false );
-      //$('#cancel').prop( "disabled", true );
+      $('#meldToggle').prop( "disabled", true );
+      $('#cancel').prop( "disabled", true );
 
       messageText = "Your turn";
     }
@@ -363,8 +353,8 @@ const checkTurn = (turn) => {
       $('#Deck').removeClass('enabled').addClass('disabled');
       $('#DiscardPile').removeClass('enabled').addClass('disabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
-      //$('#meldToggle').prop( "disabled", true );
-      //$('#cancel').prop( "disabled", true );
+      $('#meldToggle').prop( "disabled", true );
+      $('#cancel').prop( "disabled", true );
       messageText = "Opponent's Turn";
     }
     messageBar.innerHTML = messageText;
