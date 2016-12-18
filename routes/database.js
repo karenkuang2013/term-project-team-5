@@ -44,14 +44,22 @@ let database = function (db) {
    }
 
    this.registerNewUser = (request, response) => {
-       return db.none("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5)",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
-    .then(function () {
-      response.redirect('/login');
+       return db.one("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5) returning player_id",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
+    .then( (result) => {
+      // response.redirect('/login');
+      return result
     })
     .catch(function (error) {
       console.log(error);
     });
    }
+
+  this.createScoreboard = (playerId) => {
+    return db.none("Insert into scoreboard(player_id, games_won, total_games) values($1, 0, 0)", [playerId])
+    .then ( () => {
+      // response.redirect('/login');
+    })
+  }
 
   this.getAvailableGames = () => {
     return db.any("Select game_id from games where is_available = true ")
