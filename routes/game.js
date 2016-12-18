@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS }
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
@@ -71,7 +71,8 @@ module.exports = function(db, io) {
   function isLegalMeld(tempMeldCards) {
     var sortedMeldCards = tempMeldCards.sort();
     var length = sortedMeldCards.length;
-    var isLegal = true;
+    var isOrdered = true;
+    var isRanked = true;
 
     //check if in range
      if(length > 1 &&
@@ -89,21 +90,26 @@ module.exports = function(db, io) {
     for(let i = 0; i<length-1; i++) {
       if(!isInOrderAndSameSuit(sortedMeldCards[i], sortedMeldCards[i+1])) {
         console.log("NOT IN ORDER");
-        isLegal = false;
+        isOrdered = false;
+        break;
       }
     }
     
-    //check if same rank: 1s,1h,1d,1c..etc
-    isLegal = true;
+    //if not in order, check if same rank
     for(let j = 0; j<length-1; j++) {
       if(!isSameRank(sortedMeldCards[j], sortedMeldCards[j+1])) {
         console.log("NOT SAME RANK");
-        isLegal = false;
+        isRanked = false;
+        break;
       }
+    }
+    
+    if(isOrdered == false && isRanked == false) {
+      return false;
     }
 
     console.log("Checking Legal Meld: IS LEGAL");
-    return isLegal;
+    return true;
   }
 
   function isInOrderAndSameSuit(card1, card2) {
@@ -126,7 +132,7 @@ module.exports = function(db, io) {
   
   function isSameSuit(card1, card2) {
     //check same suit
-    if((card1/NUM_CARDS_IN_SUIT) == (card2/NUM_CARDS_IN_SUIT)) {
+    if(Math.floor(card1/NUM_CARDS_IN_SUIT) == Math.floor(card2/NUM_CARDS_IN_SUIT)) {
       //check edge case: (13, 26, 39, 52)/13 = 1, 2, 3, 4 but do not belong in that suit
       if(card1%NUM_CARDS_IN_SUIT == 0 || card2%NUM_CARDS_IN_SUIT == 0) {
         return false;
@@ -253,6 +259,13 @@ module.exports = function(db, io) {
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
       }
     }
+    
+    const pickedMeldCard = (json) => {
+      //when should i call this database call?
+      //database.addGameStateToDb(json);
+      game_io.to(json.gameId.toString()).emit(PICKED_MELD_SUCCESS, json);
+    }
+    
     /* End Game Functions */
 
     /*New player joined /game */
@@ -261,6 +274,7 @@ module.exports = function(db, io) {
     socket.on(DISCARD_CARD, cardDiscarded)
     socket.on(WITHDRAW_CARD, withdrawCard)
     socket.on(CARDS_MELDED, cardsMelded)
+    socket.on(PICKED_MELD_CARD, pickedMeldCard)
 
     socket.on('disconnect', () => {
       console.log("user disconnected from /game namespace");

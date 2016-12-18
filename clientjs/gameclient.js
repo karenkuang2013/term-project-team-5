@@ -1,4 +1,4 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -52,6 +52,7 @@ $(document).ready(function() {
   socket.on(SUCCESS, success);
   socket.on(SUCCESSFUL_MELD, onSuccessfulMeld);
   socket.on(FAILED_MELD, onFailedMeld);
+  socket.on(PICKED_MELD_SUCCESS, onSuccessfulMeldPick)
 })
 
 const bindEvents = () => {
@@ -172,7 +173,7 @@ const pickMeldCards = (event) => {
   var indexOfCardToRemove = gameJSON.playerHands[game.playerId].indexOf(parseInt(card));
   gameJSON.playerHands[game.playerId].splice(indexOfCardToRemove, 1);
 
-  emitUpdate();
+  socket.emit(PICKED_MELD_CARD, gameJSON);
   bindEvents();
 }
 
@@ -198,6 +199,9 @@ const onSuccessfulMeld = (json) => {
   $('#temp_meld').empty();
   tempMeldCards.length = 0;
   
+  //remove from player hands
+  
+  
   console.log("TEMP MELD GETTING DELEATED");
   updateMeldArea(json);
 }
@@ -215,6 +219,21 @@ const onFailedMeld = (json) => {
   tempMeldCards.length = 0;
   
   updateMeldArea(json);
+}
+
+const onSuccessfulMeldPick = (json) => {
+  var playerHand = "";
+  var turn = json.turn.toString();
+  
+  /* Render only the current turn Player's hands  */
+  if(game.playerId == turn) {
+    json.playerHands[game.playerId].forEach((value)=> {
+      playerHand = playerHand + "<div id='card"+value+"' cardvalue="+value+" />";
+    })
+    $('#PlayerHand').html(playerHand);
+  }
+  
+  bindEvents();
 }
 
 const updateMeldArea = (json) => {
@@ -316,32 +335,7 @@ const checkTurn = (turn) => {
       //$('#cancel').prop( "disabled", true );
       messageText = "Opponent's Turn";
     }
-    /*
-    if(turn.localeCompare(game.playerId)==0)
-    {
-      console.log(game.playerId + ": It's my turn!");
-        $('#Deck').removeClass('enabled').addClass('disabled');
-        $('#DiscardPile').removeClass('enabled').addClass('disabled');
-        $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        //$('#meldToggle').prop( "disabled", false );
-        //$('#cancel').prop( "disabled", true );
-
-        messageText = "Opponent's turn";
-    }
-    else{
-        console.log(game.playerId + ": It's not my turn!");
-        console.log("Turn: " + turn);
-            
-        $('#Deck').removeClass('disabled').addClass('enabled');
-        $('#DiscardPile').removeClass('disabled').addClass('enabled');
-        $('#PlayerHand').removeClass('enabled').addClass('disabled');
-        //$('#meldToggle').prop( "disabled", true );
-        //$('#cancel').prop( "disabled", true );
-        messageText = "Your Turn";
-    }
-    */
     messageBar.innerHTML = messageText;
-
 }
 
 function addLogout() {
