@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE }
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
@@ -80,7 +80,7 @@ module.exports = function(db, io) {
       io.of('/lobby').emit( UPDATEGAMELIST, listGameIds )
     })
   }
-  
+
   function isLegalMeld(tempMeldCards) {
     console.log("TEMP: " + tempMeldCards.toString());
     var sortedMeldCards = tempMeldCards.sort();
@@ -91,7 +91,7 @@ module.exports = function(db, io) {
     if(length > 2) {
     //check if in range
     //checks that it is not a legal same suit meld
-      if((sortedMeldCards[length-1]%NUM_CARDS_IN_SUIT != sortedMeldCards[0]%NUM_CARDS_IN_SUIT)) 
+      if((sortedMeldCards[length-1]%NUM_CARDS_IN_SUIT != sortedMeldCards[0]%NUM_CARDS_IN_SUIT))
     {
       if(sortedMeldCards[length-1] >= sortedMeldCards[0]+NUM_CARDS_IN_SUIT) {
         console.log("Checking Legal Meld: NOT IN RANGE");
@@ -108,7 +108,7 @@ module.exports = function(db, io) {
         break;
       }
     }
-    
+
     //if not in order, check if same rank
     for(let j = 0; j<length-1; j++) {
       if(!isSameRank(sortedMeldCards[j], sortedMeldCards[j+1])) {
@@ -117,7 +117,7 @@ module.exports = function(db, io) {
         break;
       }
     }
-    
+
     if(isOrdered == false && isRanked == false) {
       return false;
     }
@@ -142,10 +142,10 @@ module.exports = function(db, io) {
     if((card1 % NUM_CARDS_IN_SUIT) == (card2 % NUM_CARDS_IN_SUIT)) {
       return true;
     }
-    
+
     return false;
   }
-  
+
   function isSameSuit(card1, card2) {
     //check same suit
     if(Math.floor(card1/NUM_CARDS_IN_SUIT) == Math.floor(card2/NUM_CARDS_IN_SUIT)) {
@@ -153,10 +153,10 @@ module.exports = function(db, io) {
       if(card1%NUM_CARDS_IN_SUIT == 0 || card2%NUM_CARDS_IN_SUIT == 0) {
         return false;
       }
-      
+
       return true;
     }
-    
+
     return false;
   }
 
@@ -190,7 +190,7 @@ module.exports = function(db, io) {
             })
           }
           else {
-            game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )
+            game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Welcome !\n Waiting for other player to join.'} )
           }
         }
         else {
@@ -246,6 +246,25 @@ module.exports = function(db, io) {
       // database.addGameStateToDb(json);
       database.updateGameState_JSON(json.gameId, json)
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
+
+      checkPlayerWonTie(json)
+    }
+
+    const checkPlayerWonTie = (json) => {
+
+      Object.keys(json.playerHands).forEach( (player) => {
+        if(json.playerHands[player].length == 0) {
+          console.log('WIN');
+          game_io.to(json.gameId.toString()).emit( WIN, { playerId: player } )
+          return
+        }
+      })
+
+      if (json.deck.length == 0) {
+        console.log('TIE');
+        game_io.to(json.gameId.toString()).emit( TIE, { msg : "Game is a Tie" } )
+      }
+
     }
 
     const withdrawCard = (json) => {
@@ -273,12 +292,12 @@ module.exports = function(db, io) {
       console.log('server got discard request');
       updateGame(updatedJson)
     }
-    
+
     const cardsLayoff = (data) => {
       let meldJSON = data.meldJSON;
       let gameJSON = data.gameJSON;
       let layoffLength = data.layoffLength;
-      
+
       if(isLegalMeld(meldJSON.melds[meldJSON.layoffId])) {
         console.log("IS LEGAL LAYOFF");
         //update to db
@@ -289,13 +308,13 @@ module.exports = function(db, io) {
         console.log("IS NOT LEGAL LAYOFF");
         //remove the pushed cards
         gameJSON.melds[gameJSON.layoffId].splice(layoffLength*-1, layoffLength);
-        
+
         console.log(gameJSON.melds[gameJSON.layoffId].toString());
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
       }
-     
+
     }
-    
+
     const cardsMelded = (gameJSON, meldJSON) => {
       if(isLegalMeld(meldJSON.melds[meldJSON.meldId])) {
         console.log("IS LEGAL MELD");
@@ -311,15 +330,15 @@ module.exports = function(db, io) {
         console.log(gameJSON.melds[gameJSON.meldId].toString());
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
       }
-     
+
     }
-    
+
     const pickedMeldCard = (json) => {
       //when should i call this database call?
       //database.addGameStateToDb(json);
       game_io.to(json.gameId.toString()).emit(PICKED_MELD_SUCCESS, json);
     }
-    
+
     /* End Game Functions */
 
     /*New player joined /game */

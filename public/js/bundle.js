@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -20,7 +20,9 @@ const intializeSocket = () => {
 
 const displayWait = (data) => {
  $('#gameArea').hide();
-
+ $('#waitingArea').show();
+ $('#waitMessage').html(data.msg);
+/*
  var form = document.getElementById("waitingArea");
  var alertDiv = document.createElement("DIV");
  var alertText = document.createTextNode("Welcome !\n Waiting for other player to join.");
@@ -29,6 +31,21 @@ const displayWait = (data) => {
  alertDiv.setAttribute("role", "alert");
  alertDiv.appendChild(alertText);
  form.appendChild(alertDiv);
+ */
+}
+
+const displayWin = (data) => {
+
+  if(parseInt(data.playerId) == game.playerId) {
+    $('#waitMessage').html("You won the game");
+  }
+  else {
+    $('#waitMessage').html("You lost the game");
+  }
+
+  $('#gameArea').hide();
+  $('#waitingArea').show();
+
 }
 
 
@@ -54,6 +71,8 @@ $(document).ready(function() {
   socket.on(SUCCESSFUL_MELD, onSuccessfulMeld);
   socket.on(FAILED_MELD, onFailedMeld);
   socket.on(PICKED_MELD_SUCCESS, onSuccessfulMeldPick)
+  socket.on(WIN, displayWin)
+  socket.on(TIE, displayWait)
 })
 
 const bindEvents = () => {
@@ -97,7 +116,7 @@ const toggleMeld = () => {
 
 const takeDiscardPileCard = (event) => {
   if ($('#DiscardPile').hasClass('disabled')) return;
-  
+
   var card = $(event.target).attr('cardvalue');
   console.log('player ' + game.playerId + ' clicked ' + card);
 
@@ -171,13 +190,13 @@ const layoffMeldCards = (event) => {
   console.log("div id " + cardsDivid);
   var meldId = parseInt(cardsDivid.match(regexDigit));
   console.log("MELD ID: " + meldId);
-    
+
   var layoffJSON = gameJSON;
   layoffJSON.layoffId = meldId;
   tempMeldCards.forEach( (card) => {
     layoffJSON.melds[meldId].push(card);
   });
-  
+
   console.log("LAYOFF JSON: " + layoffJSON.toString());
   socket.emit(CARDS_LAYOFF, { meldJSON:layoffJSON, gameJSON:gameJSON, layoffLength:tempMeldCards.length });
 
@@ -203,10 +222,10 @@ const pickMeldCards = (event) => {
 
 const stopMeldingCards = () => {
   console.log(tempMeldCards.toString());
-  
+
   meldJSON = gameJSON;
   meldJSON.melds[gameJSON.meldId] = tempMeldCards;
-  
+
   console.log("MELD JSON: " + meldJSON.toString());
   socket.emit(CARDS_MELDED, gameJSON, meldJSON);
 
@@ -230,12 +249,12 @@ const onSuccessfulMeld = (json) => {
 
 const onFailedMeld = (json) => {
   console.log("FAILED TEMP MELD GETTING DELETED");
-  
+
   //try to layoff it
   //else fail it
   var playerHand = "";
   var turn = json.turn.toString();
-  
+
   //return temp meld cards to players' hands
   tempMeldCards.forEach( (card) => {
     json.playerHands[game.playerId].push(card);
@@ -249,24 +268,24 @@ const onFailedMeld = (json) => {
 const onSuccessfulMeldPick = (json) => {
   var playerHand = "";
   var turn = json.turn.toString();
-  
+
   /* Render only the current turn Player's hands  */
   if(game.playerId == turn) {
     json.playerHands[game.playerId].forEach((value)=> {
       playerHand = playerHand + "<div id='card"+value+"' cardvalue="+value+" />";
     })
     $('#PlayerHand').html(playerHand);
-  } 
+  }
   bindEvents();
 }
 
 const updateMeldArea = (json) => {
   //reset
-  $('#meld-area').empty(); 
+  $('#meld-area').empty();
   gameJSON = json;
   var meldIds = Object.keys(json.melds);
   var meldAreaSets = "";
-  
+
   meldIds.forEach( (meldId) => {
     meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>";
     json.melds[meldId].forEach( (card) => {
@@ -281,7 +300,7 @@ const updateGame = (json) => {
   $('#gameArea').show();
   $('#waitingArea').hide();
   gameJSON = json
-  
+
   var playerHand = ""
   var opponentHand = ""
 
@@ -311,8 +330,8 @@ const updateGame = (json) => {
   var discardPile = ""
   discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[json.discard_pile.length-1]+" /></a>";
   $('#DiscardPile').html(discardPile)
-  
-  
+
+
   /* Meld area rendering */
   $('#meld-area').empty();
   var meldIds = Object.keys(json.melds);
@@ -325,7 +344,7 @@ const updateGame = (json) => {
     meldAreaSets = meldAreaSets + " </div>";
   });
   $('#meld_area').html(meldAreaSets);
-  
+
   checkTurn(json.turn.toString());
   bindEvents();
 }
@@ -334,7 +353,7 @@ const updateGame = (json) => {
 const checkTurn = (turn) => {
     var messageBar = document.getElementById("Message");
     var messageText = '';
-    
+
     if(turn.localeCompare(game.playerId)==0)
     {
       console.log(game.playerId + ": It's my turn!");
@@ -350,7 +369,7 @@ const checkTurn = (turn) => {
     else {
       console.log(game.playerId + ": It's not my turn!");
       console.log("Turn: " + turn);
-            
+
       $('#Deck').removeClass('enabled').addClass('disabled');
       $('#DiscardPile').removeClass('enabled').addClass('disabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
@@ -386,12 +405,15 @@ const CARDS_MELDED = 'cards melded'
 const UPDATE = 'update request'
 const DISCARD_CARD = 'card discarded'
 const SUCCESS = 'success'
+const WIN = 'game won'
+const TIE = 'game tie'
 const SUCCESSFUL_MELD = 'successful meld'
 const FAILED_MELD = 'failed meld'
 const PICKED_MELD_CARD = 'picked meld card'
 const PICKED_MELD_SUCCESS = 'picked meld success'
 const CARDS_LAYOFF = 'cards layoff'
 
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF }
+
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE  }
 
 },{}]},{},[1]);
