@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, WIN, TIE }
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
@@ -110,7 +110,7 @@ module.exports = function(db, io) {
             })
           }
           else {
-            game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Please wait'} )
+            game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Welcome !\n Waiting for other player to join.'} )
           }
         }
         else {
@@ -166,6 +166,25 @@ module.exports = function(db, io) {
       // database.addGameStateToDb(json);
       database.updateGameState_JSON(json.gameId, json)
       game_io.to(json.gameId.toString()).emit( UPDATE_SERVER, json )
+
+      checkPlayerWonTie(json)
+    }
+
+    const checkPlayerWonTie = (json) => {
+
+      Object.keys(json.playerHands).forEach( (player) => {
+        if(json.playerHands[player].length == 0) {
+          console.log('WIN');
+          game_io.to(json.gameId.toString()).emit( WIN, { playerId: player } )
+          return
+        }
+      })
+
+      if (json.deck.length == 0) {
+        console.log('TIE');
+        game_io.to(json.gameId.toString()).emit( TIE, { msg : "Game is a Tie" } )
+      }
+
     }
 
     const withdrawCard = (json) => {

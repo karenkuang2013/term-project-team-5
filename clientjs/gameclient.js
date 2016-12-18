@@ -1,4 +1,4 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD} = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, WIN, TIE} = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -19,7 +19,9 @@ const intializeSocket = () => {
 
 const displayWait = (data) => {
  $('#gameArea').hide();
-
+ $('#waitingArea').show();
+ $('#waitMessage').html(data.msg);
+/*
  var form = document.getElementById("waitingArea");
  var alertDiv = document.createElement("DIV");
  var alertText = document.createTextNode("Welcome !\n Waiting for other player to join.");
@@ -28,6 +30,21 @@ const displayWait = (data) => {
  alertDiv.setAttribute("role", "alert");
  alertDiv.appendChild(alertText);
  form.appendChild(alertDiv);
+ */
+}
+
+const displayWin = (data) => {
+
+  if(parseInt(data.playerId) == game.playerId) {
+    $('#waitMessage').html("You won the game");
+  }
+  else {
+    $('#waitMessage').html("You lost the game");
+  }
+
+  $('#gameArea').hide();
+  $('#waitingArea').show();
+
 }
 
 
@@ -55,6 +72,8 @@ $(document).ready(function() {
 
   socket.on(SUCCESS, success)
 
+  socket.on(WIN, displayWin)
+  socket.on(TIE, displayWait)
 
 
 })
