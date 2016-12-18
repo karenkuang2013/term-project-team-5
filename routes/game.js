@@ -361,6 +361,8 @@ module.exports = function(db, io) {
         // .then (() => {
         //   broadcastGameList()
         // })
+        
+         game_io.to(gameId).emit( WAIT, {msg : 'Other Player got disconnected! Wait or return to lobby.'} )
       }
     });
 
