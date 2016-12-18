@@ -172,6 +172,7 @@ module.exports = function(db, io) {
     const playerJoined = (data) => {
       socket.join(data.gameId.toString())
       game_io.to(data.gameId.toString()).emit("user_entered_chat", "User " + username + " has entered the room...");
+      io.of('/lobby').emit('chat_received', "User " + username + " has entered game " + data.gameId);
 
       /* Check if game state is present in DB, ie, the player has rejoined */
       database.getGameState_JSON(data.gameId)
