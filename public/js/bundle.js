@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF } = require('../constants/events')
 var socket = io('/game');
 
 initChat(socket);
@@ -59,6 +59,7 @@ $(document).ready(function() {
 const bindEvents = () => {
   $('#Deck a:not(.bound)').addClass('bound').on('click', takeDeckCard);
   $('#DiscardPile a:not(.bound)').addClass('bound').on('click', takeDiscardPileCard);
+  $('#meld_area div:not(.bound)').addClass('bound').on('click', layoffMeldCards);
 
   $('#meldToggle:not(.bound)').addClass('bound').on('click', toggleMeld);
 
@@ -162,6 +163,26 @@ const discardCard = (event) => {
   bindEvents();
 }
 
+const layoffMeldCards = (event) => {
+  console.log("Laying off cards");
+  //regex to get number from meld id div
+  var regexDigit = /\d+/;
+  var cardsDiv = $(event.target).parent();
+  var meldId = parseInt(cardsDiv.attr('id').match(regexDigit));
+  console.log("MELD ID: " + meldId);
+    
+  var layoffJSON = gameJSON;
+  layoffJSON.layoffId = meldId;
+  tempMeldCards.forEach( (card) => {
+    layoffJSON.melds[meldId].push(card);
+  });
+  
+  console.log("LAYOFF JSON: " + layoffJSON.toString());
+  socket.emit(CARDS_LAYOFF, { meldJSON:layoffJSON, gameJSON:gameJSON, layoffLength:tempMeldCards.length });
+
+  bindEvents();
+}
+
 const pickMeldCards = (event) => {
   console.log("Picking meld cards");
 
@@ -181,7 +202,7 @@ const pickMeldCards = (event) => {
 const stopMeldingCards = () => {
   console.log(tempMeldCards.toString());
   
-  meldJSON = gameJSON;
+  var meldJSON = gameJSON;
   meldJSON.melds[gameJSON.meldId] = tempMeldCards;
   
   console.log("MELD JSON: " + meldJSON.toString());
@@ -209,6 +230,10 @@ const onSuccessfulMeld = (json) => {
 
 const onFailedMeld = (json) => {
   console.log("FAILED TEMP MELD GETTING DELEATED");
+  
+  //try to layoff it
+  
+  //else fail it
   var playerHand = "";
   var turn = json.turn.toString();
   
@@ -376,7 +401,8 @@ const SUCCESSFUL_MELD = 'successful meld'
 const FAILED_MELD = 'failed meld'
 const PICKED_MELD_CARD = 'picked meld card'
 const PICKED_MELD_SUCCESS = 'picked meld success'
+const CARDS_LAYOFF = 'cards layoff'
 
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS }
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF }
 
 },{}]},{},[1]);

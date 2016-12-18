@@ -8,7 +8,7 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF }
     = require('../constants/events')
 
   const MAX_PLAYERS = 2;
@@ -194,6 +194,7 @@ module.exports = function(db, io) {
         json = {
           gameId : gameId,
           meldId : 0,
+          layoffId : 0,
           deck : deckArray,
           discard_pile : dicardPileArray,
           playerHands : {
@@ -243,6 +244,27 @@ module.exports = function(db, io) {
       updateGame(updatedJson)
     }
     
+    const cardsLayoff = (data) => {
+      let meldJSON = data.meldJSON;
+      let gameJSON = data.gameJSON;
+      let layoffLength = data.layoffLength;
+      
+      if(isLegalMeld(meldJSON.melds[meldJSON.layoffId])) {
+        console.log("IS LEGAL LAYOFF");
+        //update to db
+        game_io.to(meldJSON.gameId.toString()).emit(SUCCESSFUL_MELD, meldJSON);
+      }
+      else {
+        //why does gameJSON have the melded cards? shouldn't onlymeldJSON have it?
+        console.log("IS NOT LEGAL LAYOFF");
+        //remove the pushed cards
+        gameJSON.melds[gameJSON.layoffId].splice(layoffLength*-1, layoffLength);
+        
+        console.log(gameJSON.melds[gameJSON.layoffId].toString());
+        game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
+      }
+    }
+    
     const cardsMelded = (gameJSON, meldJSON) => {
       if(isLegalMeld(meldJSON.melds[meldJSON.meldId])) {
         console.log("IS LEGAL MELD");
@@ -275,6 +297,7 @@ module.exports = function(db, io) {
     socket.on(WITHDRAW_CARD, withdrawCard)
     socket.on(CARDS_MELDED, cardsMelded)
     socket.on(PICKED_MELD_CARD, pickedMeldCard)
+    socket.on(CARDS_LAYOFF, cardsLayoff)
 
     socket.on('disconnect', () => {
       console.log("user disconnected from /game namespace");
