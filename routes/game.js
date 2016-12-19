@@ -374,10 +374,10 @@ module.exports = function(db, io) {
       if(typeof gameId != 'undefined') {
         game_io.to(gameId).emit("user_left_chat", "User " + session.user + " has left the room...");
 
-        // database.updateAvailableGames(gameId)
-        // .then (() => {
-        //   broadcastGameList()
-        // })
+        database.updateAvailableGames(gameId)
+        .then (() => {
+          broadcastGameList()
+        })
 
          game_io.to(gameId).emit( WAIT, {msg : gameMessages.MSG_DISCONNECT} )
       }
