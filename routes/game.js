@@ -23,7 +23,7 @@ module.exports = function(db, io) {
   router.get( '/createGame', ( request, response ) => {
     console.log(request.session.player_id + ' requested new game')
 
-    gameId = generateRandomGameId()
+    const gameId = generateRandomGameId()
     database.createGame(gameId)
     .then ((result) => {
       database.createGamePlayer(gameId, request.session.player_id)
@@ -36,7 +36,7 @@ module.exports = function(db, io) {
 
   /* Route for game room */
   router.get('/:gameId', (req, resp) => {
-    gameId = req.params.gameId
+    const gameId = req.params.gameId
     session = req.session;
     playerId = session.player_id
     username = session.user;
@@ -63,7 +63,7 @@ module.exports = function(db, io) {
     //gameId = req.params.gameId
     database.createGamePlayer(req.params.gameId, req.session.player_id)
     .then( () => {
-      resp.redirect('/game/' + gameId)
+      resp.redirect('/game/' + req.params.gameId)
     })
 
   })
@@ -170,6 +170,7 @@ module.exports = function(db, io) {
   /* Socket Operations */
   const game_io = io.of('/game')
   game_io.on('connection', function(socket) {
+    let gameId
     console.log(username + " connected to /game namespace");
 
     //Used to pass playerId to client
@@ -177,6 +178,8 @@ module.exports = function(db, io) {
 
     /* Game Functions */
     const playerJoined = (data) => {
+      gameId = data.gameId
+
       socket.join(data.gameId.toString())
       game_io.to(data.gameId.toString()).emit("user_entered_chat", "User " + username + " has entered the room...");
       io.of('/lobby').emit('chat_received', "User " + username + " has entered game " + data.gameId);
@@ -374,10 +377,10 @@ module.exports = function(db, io) {
       if(typeof gameId != 'undefined') {
         game_io.to(gameId).emit("user_left_chat", "User " + session.user + " has left the room...");
 
-        // database.updateAvailableGames(gameId)
-        // .then (() => {
-        //   broadcastGameList()
-        // })
+        database.updateAvailableGames(gameId)
+        .then (() => {
+          broadcastGameList()
+        })
 
          game_io.to(gameId).emit( WAIT, {msg : gameMessages.MSG_DISCONNECT} )
       }
