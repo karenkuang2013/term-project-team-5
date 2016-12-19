@@ -1,5 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE, GAME_MESSAGE } = require('../constants/events')
+var gameMessages = require('../constants/gameMessages')
 var socket = io('/game');
 
 initChat(socket);
@@ -37,10 +38,10 @@ const displayWait = (data) => {
 const displayWin = (data) => {
 
   if(parseInt(data.playerId) == game.playerId) {
-    $('#waitMessage').html("You won the game");
+    $('#waitMessage').html(gameMessages.MSG_WIN);
   }
   else {
-    $('#waitMessage').html("You lost the game");
+    $('#waitMessage').html(gameMessages.MSG_LOST);
   }
 
   $('#gameArea').hide();
@@ -73,6 +74,7 @@ $(document).ready(function() {
   socket.on(PICKED_MELD_SUCCESS, onSuccessfulMeldPick)
   socket.on(WIN, displayWin)
   socket.on(TIE, displayWait)
+  socket.on(GAME_MESSAGE, changeMessage)
 })
 
 const bindEvents = () => {
@@ -153,7 +155,6 @@ const success = (json) => {
     $('#DiscardPile').removeClass('enabled').addClass('disabled');
     $('#PlayerHand').removeClass('disabled').addClass('enabled');
     $('#meldToggle').prop( "disabled", false );
-    $('#cancel').prop( "disabled", false );
   }
 }
 
@@ -232,6 +233,12 @@ const stopMeldingCards = () => {
   bindEvents();
 }
 
+const changeMessage = (msgJson) => {
+    var messageBar = document.getElementById("Message");
+    if(msgJson.turn.localeCompare(game.playerId)==0)
+     messageBar.innerHTML = msgJson.msg;
+
+}
 const emitUpdate = () => {
   socket.emit(UPDATE_CLIENT, gameJSON)
 }
@@ -289,7 +296,7 @@ const updateMeldArea = (json) => {
   meldIds.forEach( (meldId) => {
     meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>";
     json.melds[meldId].forEach( (card) => {
-      meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
+      meldAreaSets = meldAreaSets + "<div style = width:30% id='card" + card + "' cardvalue=" + card + " />";
     });
     meldAreaSets = meldAreaSets + " </div>";
   });
@@ -362,9 +369,8 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('disabled').addClass('enabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      $('#cancel').prop( "disabled", true );
 
-      messageText = "Your turn";
+      messageText = "Your turn. Choose a card from deck or discard pile.";
     }
     else {
       console.log(game.playerId + ": It's not my turn!");
@@ -374,7 +380,6 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('enabled').addClass('disabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      $('#cancel').prop( "disabled", true );
       messageText = "Opponent's Turn";
     }
     messageBar.innerHTML = messageText;
@@ -392,7 +397,7 @@ function addLogout() {
   navBar.appendChild(liNode);
 }
 
-},{"../constants/events":2}],2:[function(require,module,exports){
+},{"../constants/events":2,"../constants/gameMessages":3}],2:[function(require,module,exports){
 const PLAYER_JOINED = 'player joined'
 const UPDATEGAMELIST = 'update game list'
 const STARTGAME = 'start game'
@@ -412,8 +417,24 @@ const FAILED_MELD = 'failed meld'
 const PICKED_MELD_CARD = 'picked meld card'
 const PICKED_MELD_SUCCESS = 'picked meld success'
 const CARDS_LAYOFF = 'cards layoff'
+const GAME_MESSAGE = 'game message'
 
 
-module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE  }
+module.exports = { PLAYER_JOINED, UPDATEGAMELIST, STARTGAME, WITHDRAW_CARD, WELCOME, WAIT, UPDATE_CLIENT, UPDATE_SERVER, CARDS_MELDED, UPDATE , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE, GAME_MESSAGE  }
+
+},{}],3:[function(require,module,exports){
+module.exports = Object.freeze({
+MSG_WITHDRAW_CARD : 'Discard a card OR click on start meld to meld cards.',
+MSG_WAIT : 'Welcome ! Waiting for other player to join.',
+MSG_DISCONNECT : 'Other Player got disconnected! Wait or return to lobby.',
+MSG_WIN : 'Congratulations!!!!! You won the game.',
+MSG_LOST : 'You Lost',
+MSG_TIE : 'Game is a Tie',
+MSG_SUCCESSFUL_MELD : 'Cards melded. Your Turn Again! Discard or meld cards.',
+MSG_FAILED_MELD : 'Meld failed. Melded cards should be of same suit sequence OR same numbers.',
+MSG_CARDS_LAYOFF_SUCCESS : 'cards layoff successful',
+MSG_CARDS_LAYOFF_FAIL : 'cards layoff not successful'
+
+});
 
 },{}]},{},[1]);
