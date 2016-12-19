@@ -4,8 +4,8 @@ block head_content
   title Login
   script(type='text/javascript').
     window.onload = function() {
-      var users = !{JSON.stringify(errormsg)}
-      if(users) {
+      var msg = !{JSON.stringify(errormsg)}
+      if(msg) {
         var form = document.getElementById("login-error");
         var alertDiv = document.createElement("DIV");
         var alertText = document.createTextNode("Incorrect Username or Password");

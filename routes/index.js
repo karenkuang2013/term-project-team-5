@@ -54,7 +54,7 @@ module.exports = function(db, io) {
 
   //register page
   router.get('/register', function (request, response) {
-    response.render('registration');
+    response.render('registration',{ errormsg: false});
   });
 
   //register page
@@ -67,8 +67,7 @@ module.exports = function(db, io) {
       })
     })
     .catch((err) => {
-      //redirect to register with error
-      console.log('Ooops');
+      response.render('registration',{ errormsg: true});
     })
   });
 

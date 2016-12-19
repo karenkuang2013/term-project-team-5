@@ -3,6 +3,21 @@ extend layout
 block head_content
   title Registration
   script(src='js/validateRegister.js')
+  script(type='text/javascript').
+    window.onload = function() {
+      var msg = !{JSON.stringify(errormsg)}
+      if(msg) {
+        var form = document.getElementById("registration-error");
+        var alertDiv = document.createElement("DIV");
+        var alertText = document.createTextNode("Username already exists. Retry!");
+        
+        alertDiv.classList.add("alert", "alert-danger", "text-center");
+        alertDiv.setAttribute("role", "alert");
+        alertDiv.appendChild(alertText);
+        
+        form.appendChild(alertDiv);
+      }
+    }      
   
 block content
   include navbar.pug
@@ -12,19 +27,21 @@ block content
     .row
       .col-md-4
       .col-md-4.text-center
-        form(name='register', action='register', method='POST', onsubmit='return validateForm()')
-          .form-group
-            input#firstname.form-control(type='text', name='firstname', placeholder='First name', required='')
-            br
-            input#lastname.form-control(type='text', name='lastname', placeholder='Last name', required='')
-            br
-            input#email.form-control(type='email', name='email', placeholder='Email id')
-            br
-            input#username.form-control(type='text', name='username', placeholder='Username', required='')
-            br
-            input#password.form-control(type='password', name='password', placeholder='Password', required='')
-            br
-            input#confirm.form-control(type='password', name='confirm', placeholder='Confirm Password', required='')
-            br
-            input.btn.btn-primary(type='submit', name='submit', value='CREATE ACCOUNT')
+       .row#registration-error
+       .row
+         form(name='register', action='register', method='POST', onsubmit='return validateForm()')
+           .form-group
+             input#firstname.form-control(type='text', name='firstname', placeholder='First name', required='')
+             br
+             input#lastname.form-control(type='text', name='lastname', placeholder='Last name', required='')
+             br
+             input#email.form-control(type='email', name='email', placeholder='Email id')
+             br
+             input#username.form-control(type='text', name='username', placeholder='Username', required='')
+             br
+             input#password.form-control(type='password', name='password', placeholder='Password', required='')
+             br
+             input#confirm.form-control(type='password', name='confirm', placeholder='Confirm Password', required='')
+             br
+             input.btn.btn-primary(type='submit', name='submit', value='CREATE ACCOUNT')
       .col-md-4

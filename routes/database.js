@@ -49,7 +49,7 @@ let database = function (db) {
       // response.redirect('/login');
       return result
     })
-    .catch(function (error) {
+    .catch(function (error) {  
       console.log(error);
     });
    }
