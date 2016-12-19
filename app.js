@@ -59,6 +59,7 @@ app.use('/logout', index)
 app.use('/content', index)
 app.use('/game', game)
 app.use('/lobby', lobby)
+app.use('/rule', index)
 
 
 // catch 404 and forward to error handler
