@@ -253,18 +253,20 @@ module.exports = function(db, io) {
 
     const checkPlayerWonTie = (json) => {
 
+      if (json.deck.length == 0) {
+        console.log('TIE');
+        game_io.to(json.gameId.toString()).emit( TIE, { msg : "Game is a Tie" } )
+        return
+      }
+
+      // let playersInGame = Object.keys(json.playerHands)
       Object.keys(json.playerHands).forEach( (player) => {
         if(json.playerHands[player].length == 0) {
           console.log('WIN');
           game_io.to(json.gameId.toString()).emit( WIN, { playerId: player } )
-          return
+          database.updateScoreboard(Object.keys(json.playerHands), player)
         }
       })
-
-      if (json.deck.length == 0) {
-        console.log('TIE');
-        game_io.to(json.gameId.toString()).emit( TIE, { msg : "Game is a Tie" } )
-      }
 
     }
 
