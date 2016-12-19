@@ -154,7 +154,6 @@ const success = (json) => {
     $('#DiscardPile').removeClass('enabled').addClass('disabled');
     $('#PlayerHand').removeClass('disabled').addClass('enabled');
     $('#meldToggle').prop( "disabled", false );
-    $('#cancel').prop( "disabled", false );
   }
 }
 
@@ -237,7 +236,7 @@ const changeMessage = (msgJson) => {
     var messageBar = document.getElementById("Message");
     if(msgJson.turn.localeCompare(game.playerId)==0)
      messageBar.innerHTML = msgJson.msg;
-    
+
 }
 const emitUpdate = () => {
   socket.emit(UPDATE_CLIENT, gameJSON)
@@ -369,7 +368,6 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('disabled').addClass('enabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      $('#cancel').prop( "disabled", true );
 
       messageText = "Your turn. Choose a card from deck or discard pile.";
     }
@@ -381,7 +379,6 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('enabled').addClass('disabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      $('#cancel').prop( "disabled", true );
       messageText = "Opponent's Turn";
     }
     messageBar.innerHTML = messageText;
