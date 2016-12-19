@@ -575,10 +575,22 @@ p {font-size: 16px;}
     font-size: 20px;
     line-height: 145%;
 }
+
 #gameplay_detail{
     display: inline-block;
     font-size: 20px;
     line-height: 145%;
+}
+
+#about_us{
+    color:black;
+    text-align: center;
+}
+
+#about_texts{
+    display: inline-block;
+    font-size: 25px;
+    line-height: 160%;
 }
 
 #leaderBoard{
