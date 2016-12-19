@@ -13,13 +13,13 @@ module.exports = function(db, io) {
   let username
 
   router.use(express.static('public', {'root': './'}))
-  
+
   const dbjs = require('./database')
   const database = new dbjs(db)
 
   // Authentication and Authorization Middleware
   const auth = function(request, response, next) {
-    
+
     if (request.session && (request.session.user === username) && request.session.admin)
     {
       return next();
@@ -54,12 +54,21 @@ module.exports = function(db, io) {
 
   //register page
   router.get('/register', function (request, response) {
-    response.render('registration');
+    response.render('registration',{ errormsg: false});
   });
 
   //register page
   router.post('/register', function (request, response) {
     database.registerNewUser(request,response)
+    .then((result) => {
+      database.createScoreboard(result.player_id)
+      .then(() => {
+        response.redirect('/login');
+      })
+    })
+    .catch((err) => {
+      response.render('registration',{ errormsg: true});
+    })
   });
 
   // Logout endpoint
@@ -73,7 +82,7 @@ module.exports = function(db, io) {
   {
       database.checkPlayerExists(request,response)
       .then((data) => {
-          
+
       username  = request.body.username;
       request.session.user = request.body.username;
       request.session.admin = true;

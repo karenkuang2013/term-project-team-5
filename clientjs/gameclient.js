@@ -1,4 +1,5 @@
-var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE } = require('../constants/events')
+var { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, STARTGAME, WAIT, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , WITHDRAW_CARD, SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE, GAME_MESSAGE } = require('../constants/events')
+var gameMessages = require('../constants/gameMessages')
 var socket = io('/game');
 
 initChat(socket);
@@ -36,10 +37,10 @@ const displayWait = (data) => {
 const displayWin = (data) => {
 
   if(parseInt(data.playerId) == game.playerId) {
-    $('#waitMessage').html("You won the game");
+    $('#waitMessage').html(gameMessages.MSG_WIN);
   }
   else {
-    $('#waitMessage').html("You lost the game");
+    $('#waitMessage').html(gameMessages.MSG_LOST);
   }
 
   $('#gameArea').hide();
@@ -72,6 +73,7 @@ $(document).ready(function() {
   socket.on(PICKED_MELD_SUCCESS, onSuccessfulMeldPick)
   socket.on(WIN, displayWin)
   socket.on(TIE, displayWait)
+  socket.on(GAME_MESSAGE, changeMessage)
 })
 
 const bindEvents = () => {
@@ -152,7 +154,6 @@ const success = (json) => {
     $('#DiscardPile').removeClass('enabled').addClass('disabled');
     $('#PlayerHand').removeClass('disabled').addClass('enabled');
     $('#meldToggle').prop( "disabled", false );
-    $('#cancel').prop( "disabled", false );
   }
 }
 
@@ -231,6 +232,12 @@ const stopMeldingCards = () => {
   bindEvents();
 }
 
+const changeMessage = (msgJson) => {
+    var messageBar = document.getElementById("Message");
+    if(msgJson.turn.localeCompare(game.playerId)==0)
+     messageBar.innerHTML = msgJson.msg;
+
+}
 const emitUpdate = () => {
   socket.emit(UPDATE_CLIENT, gameJSON)
 }
@@ -361,9 +368,8 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('disabled').addClass('enabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      $('#cancel').prop( "disabled", true );
 
-      messageText = "Your turn";
+      messageText = "Your turn. Choose a card from deck or discard pile.";
     }
     else {
       console.log(game.playerId + ": It's not my turn!");
@@ -373,7 +379,6 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('enabled').addClass('disabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      $('#cancel').prop( "disabled", true );
       messageText = "Opponent's Turn";
     }
     messageBar.innerHTML = messageText;
