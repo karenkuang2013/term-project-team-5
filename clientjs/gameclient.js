@@ -295,7 +295,7 @@ const updateMeldArea = (json) => {
   meldIds.forEach( (meldId) => {
     meldAreaSets = meldAreaSets + "<div id='meld"+ meldId + "' class='row'>";
     json.melds[meldId].forEach( (card) => {
-      meldAreaSets = meldAreaSets + "<div id='card" + card + "' cardvalue=" + card + " />";
+      meldAreaSets = meldAreaSets + "<div style = width:30% id='card" + card + "' cardvalue=" + card + " />";
     });
     meldAreaSets = meldAreaSets + " </div>";
   });

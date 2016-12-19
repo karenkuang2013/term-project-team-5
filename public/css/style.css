@@ -532,6 +532,53 @@ p {font-size: 16px;}
     padding-left :20px;
 }
 
+#minimeld1{
+    display: inline;
+    width: 8%;
+    height: auto;
+    margin-top: 5px;
+}
+
+#minimeld2{
+    display: inline;
+    width: 8%;
+    height: auto;
+    margin-top: 5px;
+}
+
+#minimeld4{
+    display: inline;
+    width: 3%;
+    height: auto;
+    margin-top: 5px;
+}
+
+#rule{
+    background-color: #fffacd;
+    color: black;
+    font-family: sans-serif;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+#rummy_rule{
+    color:black;
+    text-align: center;
+}
+
+#rule_texts{
+    display: inline-block;
+    font-size: 20px;
+    line-height: 145%;
+}
+#gameplay_detail{
+    display: inline-block;
+    font-size: 20px;
+    line-height: 145%;
+}
+
 #menu{
   color: #1abc9c !important;
 }
