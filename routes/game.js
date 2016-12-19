@@ -263,7 +263,7 @@ module.exports = function(db, io) {
 
       if (json.deck.length == 0) {
         console.log('TIE');
-        game_io.to(json.gameId.toString()).emit( TIE, { gameMessages.MSG_TIE } )
+        game_io.to(json.gameId.toString()).emit( TIE, { msg: gameMessages.MSG_TIE } )
         return
       }
 
