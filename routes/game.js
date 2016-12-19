@@ -8,9 +8,10 @@ module.exports = function(db, io) {
   const dbjs = require('./database')
   const database = new dbjs(db)
 
-  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE }
+  const { PLAYER_JOINED, WELCOME, WITHDRAW_CARD, TRANSFER_TO_HAND, WAIT, STARTGAME, UPDATEGAMELIST, UPDATE_SERVER, UPDATE_CLIENT, CARDS_MELDED , SUCCESS, DISCARD_CARD, SUCCESSFUL_MELD, FAILED_MELD, PICKED_MELD_CARD, PICKED_MELD_SUCCESS, CARDS_LAYOFF, WIN, TIE, GAME_MESSAGE }
     = require('../constants/events')
 
+  const gameMessages = require('../constants/gameMessages')
   const MAX_PLAYERS = 2;
   const NUM_CARDS_IN_SUIT = 13;
 
@@ -197,7 +198,8 @@ module.exports = function(db, io) {
             })
           }
           else {
-            game_io.to(data.gameId.toString()).emit( WAIT, {msg : 'Welcome !\n Waiting for other player to join.'} )
+              console.log(gameMessages.MSG_WAIT +" wait msg")
+            game_io.to(data.gameId.toString()).emit( WAIT, {msg : gameMessages.MSG_WAIT} )
           }
         }
         else {
@@ -269,7 +271,7 @@ module.exports = function(db, io) {
 
       if (json.deck.length == 0) {
         console.log('TIE');
-        game_io.to(json.gameId.toString()).emit( TIE, { msg : "Game is a Tie" } )
+        game_io.to(json.gameId.toString()).emit( TIE, { msg : gameMessages.MSG_TIE } )
       }
 
     }
@@ -277,6 +279,7 @@ module.exports = function(db, io) {
     const withdrawCard = (json) => {
       updateGame(json);
       game_io.to(json.gameId.toString()).emit(SUCCESS, json)
+      game_io.to(json.gameId.toString()).emit(GAME_MESSAGE, {msg: gameMessages.MSG_WITHDRAW_CARD, turn : json.turn.toString()})
 
     }
 
@@ -309,6 +312,7 @@ module.exports = function(db, io) {
         console.log("IS LEGAL LAYOFF");
         //update to db
         game_io.to(meldJSON.gameId.toString()).emit(SUCCESSFUL_MELD, meldJSON);
+        game_io.to(json.gameId.toString()).emit(GAME_MESSAGE, {msg: gameMessages.MSG_CARDS_LAYOFF_SUCCESS, turn : gameJSON.turn.toString()})
       }
       else {
         //why does gameJSON have the melded cards? shouldn't onlymeldJSON have it?
@@ -318,6 +322,7 @@ module.exports = function(db, io) {
 
         console.log(gameJSON.melds[gameJSON.layoffId].toString());
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
+        game_io.to(json.gameId.toString()).emit(GAME_MESSAGE, {msg: gameMessages.MSG_CARDS_LAYOFF_FAIL, turn : gameJSON.turn.toString()})
       }
 
     }
@@ -329,6 +334,7 @@ module.exports = function(db, io) {
         //increment meldId
         meldJSON.meldId++;
         game_io.to(meldJSON.gameId.toString()).emit(SUCCESSFUL_MELD, meldJSON);
+         game_io.to(json.gameId.toString()).emit(GAME_MESSAGE, {msg: gameMessages.MSG_SUCCESSFUL_MELD, turn : meldJSON.turn.toString()})
       }
       else {
         //why does gameJSON have the melded cards? shouldn't onlymeldJSON have it?
@@ -336,6 +342,7 @@ module.exports = function(db, io) {
         gameJSON.melds[gameJSON.meldId].length = 0; //clear last meld
         console.log(gameJSON.melds[gameJSON.meldId].toString());
         game_io.to(gameJSON.gameId.toString()).emit(FAILED_MELD, gameJSON);
+         game_io.to(json.gameId.toString()).emit(GAME_MESSAGE, {msg: gameMessages.MSG_FAILED_MELD, turn : gameJSON.turn.toString()})
       }
 
     }
@@ -368,7 +375,7 @@ module.exports = function(db, io) {
         //   broadcastGameList()
         // })
         
-         game_io.to(gameId).emit( WAIT, {msg : 'Other Player got disconnected! Wait or return to lobby.'} )
+         game_io.to(gameId).emit( WAIT, {msg : gameMessages.MSG_DISCONNECT} )
       }
     });
 
