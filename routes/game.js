@@ -80,10 +80,15 @@ module.exports = function(db, io) {
       io.of('/lobby').emit( UPDATEGAMELIST, listGameIds )
     })
   }
+  
+  const increasingSort = (a, b) => {
+    return a-b;
+  }
 
   function isLegalMeld(tempMeldCards) {
     console.log("TEMP: " + tempMeldCards.toString());
-    var sortedMeldCards = tempMeldCards.sort();
+    var sortedMeldCards = tempMeldCards.sort(increasingSort);
+    console.log("SORTED:" + sortedMeldCards.toString());
     var length = sortedMeldCards.length;
     var isOrdered = true;
     var isRanked = true;
@@ -129,12 +134,15 @@ module.exports = function(db, io) {
   }
 
   function isInOrderAndSameSuit(card1, card2) {
+    console.log("CARD1: " + card1 + " CARD2: " + card2);
     if(isSameSuit(card1, card2)) {
       if((card1 == card2+1) || (card1 == card2-1)) {
+        console.log("IS ORDER AND SAME SUIT");
         return true;
       }
     }
 
+    console.log("IS NOT IN ORDER AND SAME SUIT");
     return false;
   }
 
@@ -151,6 +159,7 @@ module.exports = function(db, io) {
     //card1-1 to convert from 1-13 to 0-12 scale so that the edge cards (13) will 
     //be in the same group as 1-12
     if(Math.floor((card1-1)/NUM_CARDS_IN_SUIT) == Math.floor((card2-1)/NUM_CARDS_IN_SUIT)) {
+      console.log("IS SAME SUIT");
       return true;
     }
 
