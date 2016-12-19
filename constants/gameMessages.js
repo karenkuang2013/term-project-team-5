@@ -5,14 +5,9 @@ MSG_DISCONNECT : 'Other Player got disconnected! Wait or return to lobby.',
 MSG_WIN : 'Congratulations!!!!! You won the game.',
 MSG_LOST : 'You Lost',
 MSG_TIE : 'Game is a Tie',
-MSG_SUCCESSFUL_MELD : 'Cards melded. Your Turn Again! Discard or meld a card.',
+MSG_SUCCESSFUL_MELD : 'Cards melded. Your Turn Again! Discard or meld cards.',
 MSG_FAILED_MELD : 'Meld failed. Melded cards should be of same suit sequence OR same numbers.',
 MSG_CARDS_LAYOFF_SUCCESS : 'cards layoff successful',
 MSG_CARDS_LAYOFF_FAIL : 'cards layoff not successful'
 
 });
-
-
-
-
-
