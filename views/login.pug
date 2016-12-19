@@ -4,23 +4,23 @@ block head_content
   title Login
   script(type='text/javascript').
     window.onload = function() {
-      var users = !{JSON.stringify(errormsg)}
-      if(users) {
+      var msg = !{JSON.stringify(errormsg)}
+      if(msg) {
         var form = document.getElementById("login-error");
         var alertDiv = document.createElement("DIV");
         var alertText = document.createTextNode("Incorrect Username or Password");
-        
+
         alertDiv.classList.add("alert", "alert-danger", "text-center");
         alertDiv.setAttribute("role", "alert");
         alertDiv.appendChild(alertText);
-        
+
         form.appendChild(alertDiv);
       }
-    }      
-      
+    }
+
 block content
   include navbar.pug
-  .container-fluid.background-green 
+  .container-fluid.background-green
     .row.text-center.bottom-buffer
       img(src='img/logo.jpg' style='width:25%; margin-top:15px').img-circle
     .row.bottom-buffer
@@ -36,5 +36,5 @@ block content
               br
               input.btn.btn-primary(type='submit', name='submit', value='LOGIN')
           br
-          a(href='register', style='color:rgba(255, 255, 255, 255)') Create a new account
-      .col-md-4    
+          a(href='register', style='color:rgba(255, 255, 255, 255)') New User? Sign up here!!!
+      .col-md-4

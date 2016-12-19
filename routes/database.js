@@ -44,14 +44,22 @@ let database = function (db) {
    }
 
    this.registerNewUser = (request, response) => {
-       return db.none("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5)",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
-    .then(function () {
-      response.redirect('/login');
+       return db.one("INSERT INTO players(first_name,last_name,e_mail,username,passwrd) VALUES($1, $2, $3, $4, $5) returning player_id",   [request.body.firstname, request.body.lastname, request.body.email, request.body.username, request.body.password])
+    .then( (result) => {
+      // response.redirect('/login');
+      return result
     })
-    .catch(function (error) {
+    .catch(function (error) {  
       console.log(error);
     });
    }
+
+  this.createScoreboard = (playerId) => {
+    return db.none("Insert into scoreboard(player_id, games_won, total_games) values($1, 0, 0)", [playerId])
+    .then ( () => {
+      // response.redirect('/login');
+    })
+  }
 
   this.getAvailableGames = () => {
     return db.any("Select game_id from games where is_available = true ")
@@ -116,6 +124,47 @@ let database = function (db) {
               })
   }
 
+  //rajat
+  this.verifyPlayer = (gameId, playerId) => {
+    return db.oneOrNone("Select * from gameplayers where game_id = $1 and player_id = $2", [gameId, playerId])
+    .then( (result) => {
+      return result
+    })
+    .catch( (err) => {
+      console.log(err)
+    })
+  }
+
+  this.addGameState_JSON = (gameId, json) => {
+
+    return db.none("INSERT INTO gamestate(game_id, gamejson) values ($1, $2)", [gameId, json])
+    .then( () => {
+    })
+    .catch( (err) => {
+      console.log(err);
+    })
+  }
+
+  this.updateGameState_JSON = (gameId, json) => {
+
+    return db.none("UPDATE gamestate set gamejson = $2 where game_id = $1", [gameId, json])
+    .then( () => {
+    })
+    .catch( (err) => {
+      console.log(err);
+    })
+  }
+
+  this.getGameState_JSON = (gameId) => {
+
+    return db.oneOrNone("Select * from gamestate where game_id = $1", [gameId])
+    .then( (result) => {
+      return result
+    })
+    .catch( (err) => {
+      console.log(err)
+    })
+  }
 }
 
 module.exports = database;
