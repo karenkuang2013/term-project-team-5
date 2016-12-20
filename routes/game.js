@@ -217,11 +217,15 @@ module.exports = function(db, io) {
         }
         else {
           console.log('player rejoined');
-          let updatedJson = switchPlayers(result.gamejson)
-          updateGame(updatedJson)
+          let updatedJSON = result.gamejson;
+          //if it was the turn of the person who disconnected, he loses his turn
+          if(result.gamejson.turn == playerId) {
+            updatedJSON = switchPlayers(result.gamejson);
+          }
+
+          updateGame(updatedJSON);
         }
       })
-
     }
 
     const initialiseCardsJSON = (gameId) => {
@@ -326,7 +330,7 @@ module.exports = function(db, io) {
       if(isLegalMeld(meldJSON.melds[meldJSON.layoffId])) {
         console.log("IS LEGAL LAYOFF");
         //update to db
-        //database.addGameState_JSON(meldJSON.gameId, meldJSON)
+        database.updateGameState_JSON(meldJSON.gameId, meldJSON)
         game_io.to(meldJSON.gameId.toString()).emit(SUCCESSFUL_MELD, meldJSON);
         game_io.to(json.gameId.toString()).emit(GAME_MESSAGE, {msg: gameMessages.MSG_CARDS_LAYOFF_SUCCESS, turn : gameJSON.turn.toString()})
       }
@@ -347,7 +351,7 @@ module.exports = function(db, io) {
       if(isLegalMeld(meldJSON.melds[meldJSON.meldId])) {
         console.log("IS LEGAL MELD");
         //update to db
-        //database.addGameState_JSON(meldJSON.gameId, meldJSON)
+        database.updateGameState_JSON(meldJSON.gameId, meldJSON)
         //increment meldId
         meldJSON.meldId++;
         game_io.to(meldJSON.gameId.toString()).emit(SUCCESSFUL_MELD, meldJSON);

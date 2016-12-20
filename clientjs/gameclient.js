@@ -339,7 +339,7 @@ const updateGame = (json) => {
   discardPile = "<a><div id='card"+json.discard_pile[json.discard_pile.length-1]+"' cardvalue="+json.discard_pile[json.discard_pile.length-1]+" /></a>";
   $('#DiscardPile').html(discardPile)
 
-
+  $('#temp_meld').html("");
   /* Meld area rendering */
   $('#meld-area').empty();
   var meldIds = Object.keys(json.melds);
@@ -381,7 +381,7 @@ const checkTurn = (turn) => {
       $('#DiscardPile').removeClass('enabled').addClass('disabled');
       $('#PlayerHand').removeClass('enabled').addClass('disabled');
       $('#meldToggle').prop( "disabled", true );
-      
+
       messageText = "Opponent's Turn";
     }
     messageBar.innerHTML = messageText;
