@@ -120,7 +120,7 @@ let database = function (db) {
   }
 
   this.getTopPlayers = (noOfPlayers) => {
-    return db.any("Select p.username, s.games_won from scoreboard s, players p where s.player_id = p.player_id order by s.games_won DESC limit $1 ", [noOfPlayers])
+    return db.any("Select p.username, s.games_won from scoreboard s, players p where s.player_id = p.player_id and s.games_won <> 0 order by s.games_won DESC limit $1 ", [noOfPlayers])
     .then ((result) => {
       return result
     })
