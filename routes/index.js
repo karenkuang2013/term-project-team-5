@@ -73,6 +73,7 @@ module.exports = function(db, io) {
 
   // Logout endpoint
   router.get('/logout', function (request, response) {
+    database.deleteGamePlayerByPlayerId(request.session.player_id)
     request.session.destroy();
     response.render('login',{ errormsg: false});
   });
@@ -99,12 +100,9 @@ module.exports = function(db, io) {
       request.session.admin = true;
       request.session.player_id = data.player_id;
 
-      console.log(request.session.player_id+ ' logged in');
-
       response.redirect('/lobby');
    });
   }
 
   return router;
 }
-  // module.exports = router
