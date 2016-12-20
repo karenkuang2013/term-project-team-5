@@ -73,6 +73,7 @@ module.exports = function(db, io) {
 
   // Logout endpoint
   router.get('/logout', function (request, response) {
+    database.deleteGamePlayerByPlayerId(request.session.player_id)
     request.session.destroy();
     response.render('login',{ errormsg: false});
   });

@@ -40,7 +40,6 @@ module.exports = function(db, io) {
     session = req.session;
     playerId = session.player_id
     username = session.user;
-
     database.verifyPlayer(gameId, playerId)
     .then ( (result) => {
       if(!result) {
@@ -188,22 +187,33 @@ module.exports = function(db, io) {
       database.getGameState_JSON(data.gameId)
       .then((result) => {
         if(!result) {
-          let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
+          database.verifyPlayer(data.gameId, playerId)
+          .then ((resultVerification) => {
+            if(!resultVerification) {
+              console.log('player doesnt exist');
+              socket.emit( WAIT, {msg : gameMessages.MSG_UNAUTHORIZED} )
+            }
+            else {
+              let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
 
-          if(playerCount == MAX_PLAYERS) {
-            initialiseCardsJSON(gameId)
-            .then ((gameJSON) => {
-              game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
-            })
-            database.updateAvailableGames(gameId)
-            .then (() => {
-              broadcastGameList()
-            })
-          }
-          else {
-            console.log(gameMessages.MSG_WAIT +" wait msg")
-            game_io.to(data.gameId.toString()).emit( WAIT, {msg : gameMessages.MSG_WAIT} )
-          }
+              if(playerCount == MAX_PLAYERS) {
+                initialiseCardsJSON(gameId)
+                .then ((gameJSON) => {
+                  game_io.to(data.gameId.toString()).emit( STARTGAME, gameJSON )
+                })
+                database.updateAvailableGames(gameId)
+                .then (() => {
+                  broadcastGameList()
+                })
+              }
+              else {
+                console.log(gameMessages.MSG_WAIT +" wait msg")
+                game_io.to(data.gameId.toString()).emit( WAIT, {msg : gameMessages.MSG_WAIT} )
+              }
+            }
+
+          })
+
         }
         else {
           console.log('player rejoined');
@@ -387,6 +397,13 @@ module.exports = function(db, io) {
         })
 
          game_io.to(gameId).emit( WAIT, {msg : gameMessages.MSG_DISCONNECT} )
+
+        //  let playerCount = io.nsps['/game'].adapter.rooms[gameId.toString()].length
+
+         if( typeof io.nsps['/game'].adapter.rooms[gameId.toString()] == 'undefined'){
+           database.deleteGamePlayer(gameId)
+           database.deleteGameState_JSON(gameId)
+         }
       }
     });
 
