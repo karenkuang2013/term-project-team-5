@@ -40,7 +40,6 @@ module.exports = function(db, io) {
     session = req.session;
     playerId = session.player_id
     username = session.user;
-
     database.verifyPlayer(gameId, playerId)
     .then ( (result) => {
       if(!result) {

@@ -33,6 +33,16 @@ let database = function (db) {
     })
   }
 
+  this.deleteGamePlayerByPlayerId = (player_id) => {
+    return db.none("Delete from gameplayers where player_id = $1", [player_id])
+    .then (() => {
+      console.log('playerId= ' + player_id + ' removed from gameplayers')
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+  }
+
   this.getGamePlayer = (gameId) => {
     return db.any("Select player_id from gameplayers where game_id = $1", [gameId])
     .then( (result) => {
