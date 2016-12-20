@@ -201,17 +201,21 @@ module.exports = function(db, io) {
             })
           }
           else {
-              console.log(gameMessages.MSG_WAIT +" wait msg")
+            console.log(gameMessages.MSG_WAIT +" wait msg")
             game_io.to(data.gameId.toString()).emit( WAIT, {msg : gameMessages.MSG_WAIT} )
           }
         }
         else {
           console.log('player rejoined');
-          let updatedJson = switchPlayers(result.gamejson)
-          updateGame(updatedJson)
+          let updatedJSON = result.gamejson;
+          //if it was the turn of the person who disconnected, he loses his turn
+          if(result.gamejson.turn == playerId) {
+            updatedJSON = switchPlayers(result.gamejson);
+          }
+          
+          updateGame(updatedJSON);
         }
       })
-
     }
 
     const initialiseCardsJSON = (gameId) => {
